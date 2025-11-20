@@ -15,9 +15,12 @@ const Login = () => {
   const { toast } = useToast();
 
   const handleLogin = async (asRole: "ADVISOR" | "STUDENT") => {
+    console.log("Login attempt started with:", { email, asRole });
     setIsLoading(true);
     try {
+      console.log("Making API call to backend...");
       const response = await authAPI.login(email, password);
+      console.log("API response received:", response);
       const { token, role, studentId } = response.data;
       
       login(token, role, studentId);
@@ -34,9 +37,12 @@ const Login = () => {
         window.location.href = `/student/${studentId}/dashboard`;
       }
     } catch (error: any) {
+      console.error("Login error details:", error);
+      console.error("Error response:", error.response);
+      console.error("Error message:", error.message);
       toast({
         title: "Login failed",
-        description: error.response?.data?.message || "Invalid credentials",
+        description: error.response?.data?.message || error.message || "Invalid credentials",
         variant: "destructive",
       });
     } finally {
