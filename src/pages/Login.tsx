@@ -26,6 +26,13 @@ const Login = () => {
         title: "Login successful",
         description: `Welcome back!`,
       });
+
+      // Navigate after successful login
+      if (role === "ADVISOR") {
+        window.location.href = "/advisor/dashboard";
+      } else {
+        window.location.href = `/student/${studentId}/dashboard`;
+      }
     } catch (error: any) {
       toast({
         title: "Login failed",
