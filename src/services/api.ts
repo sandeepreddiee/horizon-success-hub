@@ -47,10 +47,9 @@ export const authAPI = {
 
 export const advisorAPI = {
   getDashboard: () => api.get("/dashboard/advisor"),
-  getNotesPage: (studentId: number, termId: number) =>
-    api.get(`/notes/advisor-page/${studentId}/${termId}`),
-  addNote: (studentId: number, termId: number, type: string) =>
-    api.post("/notes", { studentId, termId, type }),
+  getNotes: (studentId: number) => api.get(`/notes/student/${studentId}`),
+  addNote: (studentId: number, content: string) =>
+    api.post("/notes", { studentId, content }),
 };
 
 export const studentAPI = {
