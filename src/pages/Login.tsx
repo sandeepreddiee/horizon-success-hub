@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { authAPI } from "@/services/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+import logoImage from "@/assets/horizon-logo.png";
 
 const Login = () => {
   const [email, setEmail] = useState("advisor@horizonu.edu");
@@ -41,8 +42,8 @@ const Login = () => {
       {/* Left side - Teal panel */}
       <div className="w-2/5 bg-primary flex flex-col justify-center px-16 text-primary-foreground">
         <div className="mb-12">
-          <div className="w-12 h-12 bg-white/20 rounded-lg mb-4" />
-          <span className="text-sm opacity-80">Horizon University Logo</span>
+          <img src={logoImage} alt="Horizon University Logo" className="w-16 h-16 mb-3" />
+          <span className="text-sm opacity-90">Horizon University</span>
         </div>
         
         <h1 className="text-5xl font-bold mb-6 leading-tight">
