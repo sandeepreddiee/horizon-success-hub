@@ -1,5 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 
 interface AuthContextType {
   token: string | null;
@@ -12,11 +11,10 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [token, setToken] = useState<string | null>(null);
   const [role, setRole] = useState<"ADVISOR" | "STUDENT" | null>(null);
   const [studentId, setStudentId] = useState<number | null>(null);
-  const navigate = useNavigate();
 
   useEffect(() => {
     // Load from localStorage on mount
@@ -41,13 +39,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (newStudentId) {
       localStorage.setItem("studentId", newStudentId.toString());
     }
-
-    // Navigate based on role
-    if (newRole === "ADVISOR") {
-      navigate("/advisor/dashboard");
-    } else {
-      navigate(`/student/${newStudentId}/dashboard`);
-    }
   };
 
   const logout = () => {
@@ -57,7 +48,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.removeItem("token");
     localStorage.removeItem("role");
     localStorage.removeItem("studentId");
-    navigate("/login");
+    window.location.href = "/login";
   };
 
   return (
