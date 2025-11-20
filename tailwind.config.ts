@@ -57,6 +57,19 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        teal: {
+          dark: "hsl(var(--teal-dark))",
+          light: "hsl(var(--teal-light))",
+          lighter: "hsl(var(--teal-lighter))",
+        },
+        risk: {
+          high: "hsl(var(--risk-high))",
+          "high-text": "hsl(var(--risk-high-text))",
+          medium: "hsl(var(--risk-medium))",
+          "medium-text": "hsl(var(--risk-medium-text))",
+          low: "hsl(var(--risk-low))",
+          "low-text": "hsl(var(--risk-low-text))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
