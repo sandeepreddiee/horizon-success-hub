@@ -86,6 +86,9 @@ export const authAPI = {
   },
 };
 
+// In-memory storage for notes (per student)
+const notesStorage: { [studentId: number]: Array<{ noteId: number; content: string; timestamp: string }> } = {};
+
 export const advisorAPI = {
   getDashboard: async (page: number = 1, pageSize: number = 50, riskFilter: string = "all", majorFilter: string = "all") => {
     await new Promise(resolve => setTimeout(resolve, 300));
@@ -211,23 +214,42 @@ export const advisorAPI = {
   },
   getNotes: async (studentId: number) => {
     await new Promise(resolve => setTimeout(resolve, 500));
+    
+    // Initialize with default notes if not exists
+    if (!notesStorage[studentId]) {
+      notesStorage[studentId] = [
+        { noteId: 1, content: "Student showed improvement in attendance this week. Encouraged to continue.", timestamp: "2024-11-15T10:30:00Z" },
+        { noteId: 2, content: "Discussed study strategies for upcoming midterms. Student seems motivated.", timestamp: "2024-11-10T14:15:00Z" },
+      ];
+    }
+    
     return {
       data: {
-        notes: [
-          { noteId: 1, content: "Student showed improvement in attendance this week. Encouraged to continue.", timestamp: "2024-11-15T10:30:00Z" },
-          { noteId: 2, content: "Discussed study strategies for upcoming midterms. Student seems motivated.", timestamp: "2024-11-10T14:15:00Z" },
-        ]
+        notes: notesStorage[studentId].sort((a, b) => 
+          new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+        )
       }
     };
   },
   addNote: async (studentId: number, content: string) => {
     await new Promise(resolve => setTimeout(resolve, 500));
+    
+    // Initialize if not exists
+    if (!notesStorage[studentId]) {
+      notesStorage[studentId] = [];
+    }
+    
+    const newNote = {
+      noteId: Date.now(),
+      content,
+      timestamp: new Date().toISOString()
+    };
+    
+    // Add to beginning of array (most recent first)
+    notesStorage[studentId].unshift(newNote);
+    
     return {
-      data: {
-        noteId: Date.now(),
-        content,
-        timestamp: new Date().toISOString()
-      }
+      data: newNote
     };
   },
 };
