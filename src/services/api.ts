@@ -45,7 +45,8 @@ export const authAPI = {
     // Mock login response
     await new Promise(resolve => setTimeout(resolve, 500)); // Simulate network delay
     
-    if (username === "advisor" || username === "advisor@example.com") {
+    // Check if username contains "advisor" to determine role
+    if (username.toLowerCase().includes("advisor")) {
       return {
         data: {
           token: "mock-jwt-token-advisor",
