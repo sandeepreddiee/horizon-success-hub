@@ -8,96 +8,102 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 0 0% 97%;
-    --foreground: 222 20% 20%;
+    /* Horizon Design System - Based on Mockup */
+    --background: 0 0% 97.6%; /* #F9F9F9 */
+    --foreground: 210 20% 20%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222 20% 20%;
+    --card-foreground: 210 20% 20%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222 20% 20%;
+    --popover-foreground: 210 20% 20%;
 
-    --primary: 186 48% 44%;
+    --primary: 199 57% 43%; /* #2E86AB - Primary Blue */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 178 56% 52%;
+    --secondary: 180 100% 33%; /* #00A8A8 - Teal */
     --secondary-foreground: 0 0% 100%;
 
     --muted: 210 20% 95%;
-    --muted-foreground: 210 10% 50%;
+    --muted-foreground: 210 15% 45%;
 
-    --accent: 174 45% 92%;
-    --accent-foreground: 174 55% 39%;
+    --accent: 27 89% 67%; /* #F2A365 - Orange */
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 72% 51%;
+    --success: 142 71% 45%; /* #28a745 - Green */
+    --success-foreground: 0 0% 100%;
+
+    --destructive: 0 65% 51%; /* #dc3545 - Red */
     --destructive-foreground: 0 0% 100%;
 
-    --border: 210 15% 88%;
-    --input: 210 15% 92%;
-    --ring: 174 55% 39%;
+    --border: 210 20% 88%;
+    --input: 210 20% 88%;
+    --ring: 199 57% 43%;
 
     --radius: 0.5rem;
 
-    /* Horizon specific colors */
-    --teal-dark: 186 48% 44%;
-    --teal-light: 178 56% 52%;
-    --teal-lighter: 186 45% 92%;
-    
-    /* Risk tier colors */
-    --risk-high: 0 100% 95%;
-    --risk-high-text: 0 72% 51%;
-    --risk-medium: 38 100% 95%;
-    --risk-medium-text: 38 92% 50%;
-    --risk-low: 142 76% 95%;
-    --risk-low-text: 142 76% 36%;
-    
-    /* Sidebar */
-    --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 210 15% 45%;
-    --sidebar-primary: 174 55% 39%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 174 45% 97%;
-    --sidebar-accent-foreground: 174 55% 39%;
-    --sidebar-border: 210 15% 88%;
-    --sidebar-ring: 174 55% 39%;
+    /* Risk tier colors - solid backgrounds */
+    --risk-high: 0 65% 51%; /* Red */
+    --risk-high-text: 0 0% 100%;
+    --risk-medium: 27 89% 67%; /* Orange */
+    --risk-medium-text: 0 0% 100%;
+    --risk-low: 142 71% 45%; /* Green */
+    --risk-low-text: 0 0% 100%;
+
+    /* Chart colors */
+    --chart-1: 199 57% 43%; /* Primary */
+    --chart-2: 180 100% 33%; /* Secondary */
+    --chart-3: 27 89% 67%; /* Accent */
+    --chart-4: 142 71% 45%; /* Success */
+    --chart-5: 0 65% 51%; /* Destructive */
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
+    --background: 222 20% 12%;
     --foreground: 210 40% 98%;
 
-    --card: 222.2 84% 4.9%;
+    --card: 222 20% 15%;
     --card-foreground: 210 40% 98%;
 
-    --popover: 222.2 84% 4.9%;
+    --popover: 222 20% 15%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 199 57% 43%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 180 100% 33%;
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 222 20% 20%;
+    --muted-foreground: 210 15% 65%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 27 89% 67%;
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --success: 142 71% 45%;
+    --success-foreground: 0 0% 100%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --destructive: 0 65% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 222 20% 25%;
+    --input: 222 20% 25%;
+    --ring: 199 57% 43%;
+
+    /* Risk tier colors - dark mode */
+    --risk-high: 0 65% 51%;
+    --risk-high-text: 0 0% 100%;
+    --risk-medium: 27 89% 67%;
+    --risk-medium-text: 0 0% 100%;
+    --risk-low: 142 71% 45%;
+    --risk-low-text: 0 0% 100%;
+
+    /* Chart colors */
+    --chart-1: 199 57% 53%;
+    --chart-2: 180 100% 43%;
+    --chart-3: 27 89% 77%;
+    --chart-4: 142 71% 55%;
+    --chart-5: 0 65% 61%;
   }
 }
 
@@ -108,5 +114,11 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-weight: 600;
   }
 }

@@ -27,7 +27,7 @@ const StatCard: React.FC<StatCardProps> = ({ title, label, value, className, val
         <p className="text-sm text-muted-foreground">{displayLabel}</p>
         {Icon && <Icon className="w-5 h-5 text-muted-foreground" />}
       </div>
-      <p className={cn("text-3xl font-bold", valueColor || getTrendColor())}>{value}</p>
+      <p className={cn("text-3xl font-heading font-semibold", valueColor || getTrendColor())}>{value}</p>
     </div>
   );
 };

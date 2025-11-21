@@ -50,14 +50,14 @@ const Login = () => {
   };
   return (
     <div className="flex min-h-screen">
-      {/* Left side - Teal panel */}
+      {/* Left side - Primary panel */}
       <div className="w-2/5 bg-primary flex flex-col justify-center px-16 text-primary-foreground">
         <div className="mb-12">
           <img src={logoImage} alt="Horizon University Logo" className="w-16 h-16 mb-3" />
-          <span className="text-sm opacity-90">Horizon University</span>
+          <span className="text-sm opacity-90 font-heading font-semibold">Horizon University</span>
         </div>
         
-        <h1 className="text-5xl font-bold mb-6 leading-tight">
+        <h1 className="text-5xl font-heading font-semibold mb-6 leading-tight">
           Horizon Retention &<br />Success Hub
         </h1>
         
@@ -69,7 +69,7 @@ const Login = () => {
       {/* Right side - Login form */}
       <div className="flex-1 bg-background flex items-center justify-center px-8">
         <div className="w-full max-w-md bg-card rounded-xl border border-border p-8 shadow-lg">
-          <h2 className="text-3xl font-bold text-center mb-8 text-foreground">System Login</h2>
+          <h2 className="text-3xl font-heading font-semibold text-center mb-8 text-foreground">System Login</h2>
 
           <div className="space-y-4 mb-6">
             <div>
@@ -105,7 +105,7 @@ const Login = () => {
             <Button
               onClick={() => handleLogin("ADVISOR")}
               disabled={isLoading}
-              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
+              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium"
               size="lg"
             >
               Login as Advisor
@@ -114,7 +114,7 @@ const Login = () => {
             <Button
               onClick={() => handleLogin("STUDENT")}
               disabled={isLoading}
-              className="w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground"
+              className="w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground font-medium"
               size="lg"
             >
               Login as Student
