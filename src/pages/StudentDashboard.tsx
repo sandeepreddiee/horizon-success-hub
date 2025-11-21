@@ -107,15 +107,15 @@ const StudentDashboard = () => {
         <div className="p-8">
           {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <StatCard title="Current Term GPA" value={data.currentTermGpa.toFixed(2)} />
+            <StatCard title="Cumulative GPA" value={data.cumulativeGpa.toFixed(2)} />
             <StatCard title="Attendance %" value={`${data.attendancePct}%`} />
             <StatCard title="Engagement Score" value={data.engagementScore.toString()} />
-            <div className="bg-card rounded-lg border border-border p-6">
+            <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
               <p className="text-sm text-muted-foreground mb-2">Risk Status</p>
               <div className="flex items-center gap-2">
-                <span className={`text-3xl font-bold ${
-                  data.riskTier === "Low" ? "text-green-500" : 
-                  data.riskTier === "Medium" ? "text-yellow-500" : "text-destructive"
+                <span className={`text-3xl font-heading font-semibold ${
+                  data.riskTier === "Low" ? "text-green-600" : 
+                  data.riskTier === "Medium" ? "text-yellow-600" : "text-destructive"
                 }`}>
                   {data.riskTier}
                 </span>

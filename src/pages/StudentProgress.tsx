@@ -31,7 +31,7 @@ const StudentProgress = () => {
       
       <div className="flex-1">
         <header className="bg-card border-b border-border px-8 py-6 flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-foreground">My Progress</h1>
+          <h1 className="text-2xl font-heading font-semibold text-foreground">My Progress</h1>
           <div className="flex items-center gap-4">
             <button className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
               <Users className="w-5 h-5 text-muted-foreground" />
@@ -48,8 +48,8 @@ const StudentProgress = () => {
 
         <div className="p-8">
           {/* Semester Performance Chart */}
-          <div className="bg-card rounded-lg border border-border p-6 mb-8">
-            <h3 className="text-lg font-semibold text-foreground mb-6">Semester Performance</h3>
+          <div className="bg-card rounded-lg border border-border p-6 shadow-sm mb-8">
+            <h3 className="text-lg font-heading font-semibold text-foreground mb-6">Semester Performance</h3>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={semesterData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
@@ -81,19 +81,19 @@ const StudentProgress = () => {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
             {/* Achievements */}
-            <div className="bg-card rounded-lg border border-border p-6">
+            <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
               <div className="flex items-center gap-2 mb-6">
                 <Award className="w-5 h-5 text-primary" />
-                <h3 className="text-lg font-semibold text-foreground">Achievements</h3>
+                <h3 className="text-lg font-heading font-semibold text-foreground">Achievements</h3>
               </div>
               <div className="space-y-4">
                 {achievements.map((achievement, index) => (
-                  <div key={index} className="flex items-start gap-3 p-4 bg-muted/50 rounded-lg">
+                  <div key={index} className="flex items-start gap-3 p-4 bg-background rounded-lg border border-border">
                     <div className="p-2 rounded-full bg-primary/10">
                       <Award className="w-4 h-4 text-primary" />
                     </div>
                     <div>
-                      <h4 className="font-semibold text-foreground mb-1">{achievement.title}</h4>
+                      <h4 className="font-heading font-semibold text-foreground mb-1">{achievement.title}</h4>
                       <p className="text-xs text-muted-foreground mb-1">{achievement.semester}</p>
                       <p className="text-sm text-muted-foreground">{achievement.description}</p>
                     </div>
@@ -103,10 +103,10 @@ const StudentProgress = () => {
             </div>
 
             {/* Academic Goals */}
-            <div className="bg-card rounded-lg border border-border p-6">
+            <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
               <div className="flex items-center gap-2 mb-6">
                 <Target className="w-5 h-5 text-primary" />
-                <h3 className="text-lg font-semibold text-foreground">Academic Goals</h3>
+                <h3 className="text-lg font-heading font-semibold text-foreground">Academic Goals</h3>
               </div>
               <div className="space-y-4">
                 {goals.map((goal, index) => (
@@ -115,9 +115,9 @@ const StudentProgress = () => {
                       <span className="text-sm font-medium text-foreground">{goal.title}</span>
                       <span className="text-xs font-semibold text-primary">{goal.status}</span>
                     </div>
-                    <div className="w-full bg-muted rounded-full h-2">
+                    <div className="w-full bg-muted rounded-full h-2.5">
                       <div 
-                        className="bg-primary rounded-full h-2 transition-all"
+                        className="bg-primary rounded-full h-2.5 transition-all"
                         style={{ width: `${goal.progress}%` }}
                       />
                     </div>
@@ -131,29 +131,29 @@ const StudentProgress = () => {
           </div>
 
           {/* Progress Summary */}
-          <div className="bg-card rounded-lg border border-border p-6">
-            <h3 className="text-lg font-semibold text-foreground mb-4">Overall Progress Summary</h3>
+          <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
+            <h3 className="text-lg font-heading font-semibold text-foreground mb-4">Overall Progress Summary</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="p-4 bg-muted/50 rounded-lg">
+              <div className="p-4 bg-background rounded-lg border border-border">
                 <div className="flex items-center gap-2 mb-2">
-                  <TrendingUp className="w-4 h-4 text-green-500" />
+                  <TrendingUp className="w-4 h-4 text-green-600" />
                   <span className="text-sm text-muted-foreground">Total Credits Earned</span>
                 </div>
-                <p className="text-2xl font-bold text-foreground">52</p>
+                <p className="text-2xl font-heading font-bold text-foreground">52</p>
               </div>
-              <div className="p-4 bg-muted/50 rounded-lg">
+              <div className="p-4 bg-background rounded-lg border border-border">
                 <div className="flex items-center gap-2 mb-2">
                   <TrendingUp className="w-4 h-4 text-primary" />
                   <span className="text-sm text-muted-foreground">Current GPA</span>
                 </div>
-                <p className="text-2xl font-bold text-foreground">3.90</p>
+                <p className="text-2xl font-heading font-bold text-foreground">3.90</p>
               </div>
-              <div className="p-4 bg-muted/50 rounded-lg">
+              <div className="p-4 bg-background rounded-lg border border-border">
                 <div className="flex items-center gap-2 mb-2">
                   <Target className="w-4 h-4 text-primary" />
                   <span className="text-sm text-muted-foreground">Degree Progress</span>
                 </div>
-                <p className="text-2xl font-bold text-foreground">43%</p>
+                <p className="text-2xl font-heading font-bold text-foreground">43%</p>
               </div>
             </div>
           </div>

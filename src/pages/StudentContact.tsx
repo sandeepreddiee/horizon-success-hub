@@ -27,7 +27,7 @@ const StudentContact = () => {
       
       <div className="flex-1">
         <header className="bg-card border-b border-border px-8 py-6 flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-foreground">Help & Contact Advisor</h1>
+          <h1 className="text-2xl font-heading font-semibold text-foreground">Help & Contact Advisor</h1>
           <div className="flex items-center gap-4">
             <button className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
               <Users className="w-5 h-5 text-muted-foreground" />
@@ -44,13 +44,13 @@ const StudentContact = () => {
 
         <div className="p-8">
           {/* Advisor Info */}
-          <div className="bg-card rounded-lg border border-border p-6 mb-8">
+          <div className="bg-card rounded-lg border border-border p-6 shadow-sm mb-8">
             <div className="flex items-start gap-6">
               <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
                 <Users className="w-10 h-10 text-primary" />
               </div>
               <div className="flex-1">
-                <h2 className="text-xl font-semibold text-foreground mb-1">Dr. Sarah Smith</h2>
+                <h2 className="text-xl font-heading font-semibold text-foreground mb-1">Dr. Sarah Smith</h2>
                 <p className="text-sm text-muted-foreground mb-4">Academic Advisor • Computer Science Department</p>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -77,8 +77,8 @@ const StudentContact = () => {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
             {/* Quick Actions */}
-            <div className="bg-card rounded-lg border border-border p-6">
-              <h3 className="text-lg font-semibold text-foreground mb-4">Quick Actions</h3>
+            <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
+              <h3 className="text-lg font-heading font-semibold text-foreground mb-4">Quick Actions</h3>
               <div className="space-y-3">
                 <Button className="w-full justify-start" variant="outline">
                   <Calendar className="w-4 h-4 mr-2" />
@@ -100,8 +100,8 @@ const StudentContact = () => {
             </div>
 
             {/* Send Message */}
-            <div className="bg-card rounded-lg border border-border p-6">
-              <h3 className="text-lg font-semibold text-foreground mb-4">Send a Message</h3>
+            <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
+              <h3 className="text-lg font-heading font-semibold text-foreground mb-4">Send a Message</h3>
               <div className="space-y-4">
                 <Textarea
                   placeholder="Type your message here..."
@@ -122,8 +122,8 @@ const StudentContact = () => {
           </div>
 
           {/* Recent Conversations */}
-          <div className="bg-card rounded-lg border border-border p-6">
-            <h3 className="text-lg font-semibold text-foreground mb-4">Recent Conversations</h3>
+          <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
+            <h3 className="text-lg font-heading font-semibold text-foreground mb-4">Recent Conversations</h3>
             <div className="space-y-4">
               <div className="border-b border-border pb-4">
                 <div className="flex items-start justify-between mb-2">
