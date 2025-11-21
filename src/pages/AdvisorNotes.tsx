@@ -27,19 +27,6 @@ const AdvisorNotes = () => {
 
   useEffect(() => {
     const fetchNotes = async () => {
-      const isLovablePreview = window.location.hostname.endsWith("lovableproject.com");
-
-      // Use mock data in preview environment
-      if (isLovablePreview) {
-        const mockNotes: Note[] = [
-          { noteId: 1, content: "Student showed improvement in attendance this week. Encouraged to continue.", timestamp: "2024-11-15T10:30:00Z", advisorName: "Dr. Sarah Smith" },
-          { noteId: 2, content: "Discussed study strategies for upcoming midterms. Student seems motivated.", timestamp: "2024-11-10T14:15:00Z", advisorName: "Dr. Sarah Smith" },
-        ];
-        setNotes(mockNotes);
-        setIsLoading(false);
-        return;
-      }
-
       if (!studentId) return;
 
       try {
@@ -63,33 +50,14 @@ const AdvisorNotes = () => {
   const handleAddNote = async () => {
     if (!newNote.trim() || !studentId) return;
 
-    const isLovablePreview = window.location.hostname.endsWith("lovableproject.com");
     setIsSaving(true);
-
-    // In preview, just add to local state
-    if (isLovablePreview) {
-      const mockNote: Note = {
-        noteId: notes.length + 1,
-        content: newNote,
-        timestamp: new Date().toISOString(),
-        advisorName: "Dr. Sarah Smith"
-      };
-      setNotes([mockNote, ...notes]);
-      setNewNote("");
-      toast({
-        title: "Note added (Preview)",
-        description: "Your note has been saved in preview mode.",
-      });
-      setIsSaving(false);
-      return;
-    }
 
     try {
       await advisorAPI.addNote(parseInt(studentId), newNote);
       
       toast({
         title: "Note added",
-        description: "Your note has been saved successfully.",
+        description: "Your note has been saved.",
       });
 
       // Refresh notes
