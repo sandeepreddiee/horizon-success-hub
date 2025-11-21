@@ -71,16 +71,19 @@ export const advisorAPI = {
     await new Promise(resolve => setTimeout(resolve, 500));
     return {
       data: {
-        totalStudents: 156,
-        highRiskStudents: 23,
-        averageTermGpa: 3.24,
-        averageAttendance: 87.5,
+        totalStudents: 124,
+        highRiskStudents: 18,
+        averageTermGpa: 3.15,
+        averageAttendance: 86,
         studentRows: [
-          { studentId: 1, name: "Emma Johnson", major: "Computer Science", riskTier: "High" as "High", riskScore: 75, termGpa: 2.1, attendancePct: 65 },
-          { studentId: 2, name: "Michael Chen", major: "Business Administration", riskTier: "Medium" as "Medium", riskScore: 45, termGpa: 2.8, attendancePct: 78 },
-          { studentId: 3, name: "Sarah Williams", major: "Engineering", riskTier: "Low" as "Low", riskScore: 15, termGpa: 3.6, attendancePct: 95 },
-          { studentId: 4, name: "David Martinez", major: "Psychology", riskTier: "High" as "High", riskScore: 80, termGpa: 2.0, attendancePct: 60 },
-          { studentId: 5, name: "Jessica Lee", major: "Biology", riskTier: "Low" as "Low", riskScore: 20, termGpa: 3.8, attendancePct: 92 },
+          { studentId: 1, name: "Aarav Patel", major: "Computer Science", riskTier: "High" as "High", riskScore: 88, termGpa: 2.80, attendancePct: 75 },
+          { studentId: 2, name: "Emily Nguyen", major: "Biology", riskTier: "Low" as "Low", riskScore: 22, termGpa: 3.90, attendancePct: 98 },
+          { studentId: 3, name: "Daniel Owusu", major: "Business Admin", riskTier: "Medium" as "Medium", riskScore: 56, termGpa: 3.10, attendancePct: 85 },
+          { studentId: 4, name: "Sofia Martinez", major: "Art History", riskTier: "Low" as "Low", riskScore: 15, termGpa: 3.70, attendancePct: 95 },
+          { studentId: 5, name: "Mei Chen", major: "Engineering", riskTier: "High" as "High", riskScore: 79, termGpa: 2.40, attendancePct: 80 },
+          { studentId: 6, name: "James Wilson", major: "Psychology", riskTier: "Medium" as "Medium", riskScore: 42, termGpa: 3.20, attendancePct: 88 },
+          { studentId: 7, name: "Fatima Hassan", major: "Computer Science", riskTier: "Low" as "Low", riskScore: 18, termGpa: 3.85, attendancePct: 96 },
+          { studentId: 8, name: "Lucas Brown", major: "Engineering", riskTier: "High" as "High", riskScore: 85, termGpa: 2.20, attendancePct: 72 },
         ]
       }
     };
