@@ -57,21 +57,35 @@ interface DashboardData {
 const StudentDashboard = () => {
   const [data, setData] = useState<DashboardData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const { studentId, logout } = useAuth();
+  const { studentId, logout, isAuthenticated } = useAuth();
   const { toast } = useToast();
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!studentId) {
+      console.log("[StudentDashboard] Fetching data with studentId:", studentId);
+      console.log("[StudentDashboard] isAuthenticated:", isAuthenticated);
+      
+      // If not authenticated, don't try to fetch
+      if (!isAuthenticated) {
+        console.log("[StudentDashboard] Not authenticated, redirecting");
         setIsLoading(false);
         return;
       }
       
+      // If authenticated but no studentId yet, wait a bit for it to load
+      if (!studentId) {
+        console.log("[StudentDashboard] Authenticated but no studentId yet, waiting...");
+        // Don't stop loading yet, give it time to load from localStorage
+        return;
+      }
+      
       try {
+        console.log("[StudentDashboard] Calling studentAPI.getDashboard with ID:", studentId);
         const response = await studentAPI.getDashboard(studentId);
+        console.log("[StudentDashboard] Received response:", response.data);
         setData(response.data);
       } catch (error: any) {
-        console.error("Dashboard error:", error);
+        console.error("[StudentDashboard] Dashboard error:", error);
         toast({
           title: "Error loading dashboard",
           description: error.response?.data?.message || error.message || "Failed to load data",
@@ -83,7 +97,7 @@ const StudentDashboard = () => {
     };
 
     fetchData();
-  }, [studentId, toast]);
+  }, [studentId, isAuthenticated, toast]);
 
   if (isLoading) {
     return (
