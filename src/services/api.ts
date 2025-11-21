@@ -131,15 +131,16 @@ export const studentAPI = {
           { courseName: "Software Engineering", credits: 4, grade: "A" },
         ],
         gpaTrend: [
-          { term: "Fall 2023", gpa: 3.2 },
-          { term: "Spring 2024", gpa: 3.4 },
-          { term: "Fall 2024", gpa: 3.5 },
+          { term: "Term 1", gpa: 3.2 },
+          { term: "Term 2", gpa: 3.4 },
+          { term: "Term 3", gpa: 3.7 },
+          { term: "Term 4", gpa: 3.9 },
         ],
         recommendations: [
-          "Attend the Math Tutoring Center on Tuesdays and Thursdays",
-          "Meet with your academic advisor to discuss course load",
-          "Join a study group for Data Structures course",
-          "Consider attending office hours for additional support",
+          "Explore Honors Program requirements",
+          "Sign up for the Spring research symposium",
+          "Meet advisor to discuss 400-level courses",
+          "Complete pending course surveys",
         ]
       }
     };
