@@ -17,14 +17,40 @@ const Login = () => {
   const handleLogin = async (asRole: "ADVISOR" | "STUDENT") => {
     console.log("Login attempt started with:", { email, asRole });
     setIsLoading(true);
+
+    const isLovablePreview = window.location.hostname.endsWith("lovableproject.com");
+
+    // In Lovable preview, simulate login so you can navigate without a backend
+    if (isLovablePreview) {
+      try {
+        const mockStudentId = asRole === "STUDENT" ? 1 : null;
+
+        login("preview-token", asRole, mockStudentId as number | null);
+
+        toast({
+          title: "Preview login",
+          description: `Simulated ${asRole.toLowerCase()} login in preview environment.`,
+        });
+
+        if (asRole === "ADVISOR") {
+          window.location.href = "/advisor/dashboard";
+        } else {
+          window.location.href = `/student/${mockStudentId}/dashboard`;
+        }
+      } finally {
+        setIsLoading(false);
+      }
+      return;
+    }
+
     try {
       console.log("Making API call to backend...");
       const response = await authAPI.login(email, password);
       console.log("API response received:", response);
       const { token, role, studentId } = response.data;
-      
+
       login(token, role, studentId);
-      
+
       toast({
         title: "Login successful",
         description: `Welcome back!`,
@@ -49,7 +75,6 @@ const Login = () => {
       setIsLoading(false);
     }
   };
-
   return (
     <div className="flex min-h-screen">
       {/* Left side - Teal panel */}
