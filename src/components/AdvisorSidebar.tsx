@@ -24,7 +24,12 @@ const AdvisorSidebar = () => {
       <nav className="space-y-2">
         {navItems.map((item) => {
           const Icon = item.icon;
-          const isActive = location.pathname === item.path || location.pathname.startsWith(item.path + '/');
+          let isActive = location.pathname === item.path || location.pathname.startsWith(item.path + '/');
+          
+          // Special case: highlight "My Students" when viewing individual student pages
+          if (item.path === "/advisor/students" && location.pathname.startsWith("/advisor/student/")) {
+            isActive = true;
+          }
           
           return (
             <Link
