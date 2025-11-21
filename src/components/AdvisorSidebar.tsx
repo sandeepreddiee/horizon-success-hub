@@ -24,7 +24,7 @@ const AdvisorSidebar = () => {
       <nav className="space-y-2">
         {navItems.map((item) => {
           const Icon = item.icon;
-          const isActive = location.pathname === item.path;
+          const isActive = location.pathname === item.path || location.pathname.startsWith(item.path + '/');
           
           return (
             <Link
