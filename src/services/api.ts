@@ -1,4 +1,5 @@
 import axios from "axios";
+import { loadStudents, calculateRiskTier, calculateRiskScore } from "./dataLoader";
 
 const API_BASE_URL = "http://localhost:8081/api";
 
@@ -87,25 +88,51 @@ export const authAPI = {
 
 export const advisorAPI = {
   getDashboard: async () => {
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise(resolve => setTimeout(resolve, 300));
+    
+    // Load real student data
+    const students = await loadStudents();
+    
+    // Calculate statistics from real data
+    const totalStudents = students.length;
+    const averageTermGpa = students.reduce((sum, s) => sum + s.cumulative_gpa, 0) / totalStudents;
+    
+    // Simulate attendance (since not in CSV) - generate consistent random values
+    const getAttendance = (studentId: number) => {
+      const seed = studentId * 12345;
+      const random = (seed % 30) + 70; // 70-100% range
+      return random;
+    };
+    
+    // Calculate risk for each student and count high risk
+    const studentsWithRisk = students.map(s => ({
+      ...s,
+      riskScore: calculateRiskScore(s.cumulative_gpa, s.credits_completed),
+      riskTier: calculateRiskTier(s.cumulative_gpa, s.credits_completed),
+      attendancePct: getAttendance(s.student_id)
+    }));
+    
+    const highRiskStudents = studentsWithRisk.filter(s => s.riskTier === "High").length;
+    const averageAttendance = studentsWithRisk.reduce((sum, s) => sum + s.attendancePct, 0) / totalStudents;
+    
+    // Get first 20 students for display
+    const studentRows = studentsWithRisk.slice(0, 20).map(s => ({
+      studentId: s.student_id,
+      name: s.name,
+      major: s.major,
+      riskTier: s.riskTier,
+      riskScore: s.riskScore,
+      termGpa: s.cumulative_gpa,
+      attendancePct: s.attendancePct
+    }));
+    
     return {
       data: {
-        totalStudents: 5000,
-        highRiskStudents: 892,
-        averageTermGpa: 3.18,
-        averageAttendance: 84.5,
-        studentRows: [
-          { studentId: 1, name: "Aarav Patel", major: "Computer Science", riskTier: "High" as "High", riskScore: 88, termGpa: 2.80, attendancePct: 75 },
-          { studentId: 2, name: "Emily Nguyen", major: "Biology", riskTier: "Low" as "Low", riskScore: 22, termGpa: 3.90, attendancePct: 98 },
-          { studentId: 3, name: "Daniel Owusu", major: "Business Admin", riskTier: "Medium" as "Medium", riskScore: 56, termGpa: 3.10, attendancePct: 85 },
-          { studentId: 4, name: "Sofia Martinez", major: "Art History", riskTier: "Low" as "Low", riskScore: 15, termGpa: 3.70, attendancePct: 95 },
-          { studentId: 5, name: "Mei Chen", major: "Engineering", riskTier: "High" as "High", riskScore: 79, termGpa: 2.40, attendancePct: 80 },
-          { studentId: 6, name: "James Wilson", major: "Psychology", riskTier: "Medium" as "Medium", riskScore: 42, termGpa: 3.20, attendancePct: 88 },
-          { studentId: 7, name: "Fatima Hassan", major: "Computer Science", riskTier: "Low" as "Low", riskScore: 18, termGpa: 3.85, attendancePct: 96 },
-          { studentId: 8, name: "Lucas Brown", major: "Engineering", riskTier: "High" as "High", riskScore: 85, termGpa: 2.20, attendancePct: 72 },
-          { studentId: 9, name: "Isabella Garcia", major: "Mathematics", riskTier: "Medium" as "Medium", riskScore: 48, termGpa: 3.25, attendancePct: 82 },
-          { studentId: 10, name: "Mohammed Ali", major: "Physics", riskTier: "Low" as "Low", riskScore: 19, termGpa: 3.75, attendancePct: 94 },
-        ]
+        totalStudents,
+        highRiskStudents,
+        averageTermGpa: Math.round(averageTermGpa * 100) / 100,
+        averageAttendance: Math.round(averageAttendance * 10) / 10,
+        studentRows
       }
     };
   },
