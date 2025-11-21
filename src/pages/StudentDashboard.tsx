@@ -13,6 +13,8 @@ interface Course {
   courseName: string;
   credits: number;
   grade: string;
+  numericGrade: number;
+  courseGpa: number;
 }
 
 interface LMSActivity {
@@ -40,12 +42,12 @@ interface DashboardData {
   residencyStatus: string;
   firstGen: boolean;
   
-  // Data from other CSV files
+  // Data from CSV files
   termGpas: Array<{ term: string; gpa: number }>;
   courses: Course[];
-  courseGrades: Array<{ courseName: string; grade: string }>;
   lmsActivity: LMSActivity;
   attendanceByCourse: Array<{ courseName: string; percentage: number }>;
+  averageAttendance: number;
   financial: Financial;
   riskScore: number | null;
   riskTier: "High" | "Medium" | "Low" | null;
@@ -124,25 +126,39 @@ const StudentDashboard = () => {
         </header>
 
         <div className="p-8">
-          {/* Student Profile Section */}
+          {/* Student Profile Stats */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+            <StatCard title="Cumulative GPA" value={data.cumulativeGpa.toFixed(2)} />
+            <StatCard title="Credits Completed" value={data.creditsCompleted.toString()} />
+            <StatCard title="Average Attendance" value={`${data.averageAttendance?.toFixed(1) || 0}%`} />
+            <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
+              <p className="text-sm text-muted-foreground mb-2">Risk Status</p>
+              <div className="flex items-center gap-2">
+                {data.riskTier ? (
+                  <span className={`text-3xl font-heading font-semibold ${
+                    data.riskTier === "Low" ? "text-green-600" : 
+                    data.riskTier === "Medium" ? "text-yellow-600" : "text-destructive"
+                  }`}>
+                    {data.riskTier}
+                  </span>
+                ) : (
+                  <span className="text-sm text-muted-foreground">No data</span>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Profile Details */}
           <div className="bg-card rounded-lg border border-border p-6 shadow-sm mb-6">
-            <h3 className="text-lg font-heading font-semibold text-foreground mb-4">Student Profile</h3>
+            <h3 className="text-lg font-heading font-semibold text-foreground mb-4">Profile Details</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div>
                 <p className="text-sm text-muted-foreground">Major</p>
                 <p className="text-base font-medium text-foreground">{data.major}</p>
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Credits Completed</p>
-                <p className="text-base font-medium text-foreground">{data.creditsCompleted}</p>
-              </div>
-              <div>
                 <p className="text-sm text-muted-foreground">Age</p>
                 <p className="text-base font-medium text-foreground">{data.age}</p>
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">First Generation</p>
-                <p className="text-base font-medium text-foreground">{data.firstGen ? "Yes" : "No"}</p>
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Gender</p>
@@ -153,75 +169,153 @@ const StudentDashboard = () => {
                 <p className="text-base font-medium text-foreground">{data.residencyStatus}</p>
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Cumulative GPA</p>
-                <p className="text-base font-medium text-foreground">{data.cumulativeGpa.toFixed(2)}</p>
+                <p className="text-sm text-muted-foreground">First Generation</p>
+                <p className="text-base font-medium text-foreground">{data.firstGen ? "Yes" : "No"}</p>
               </div>
+              {data.riskScore !== null && (
+                <div>
+                  <p className="text-sm text-muted-foreground">Risk Score</p>
+                  <p className="text-base font-medium text-foreground">{data.riskScore}/100</p>
+                </div>
+              )}
             </div>
           </div>
 
-          {/* Risk Status - Only show if data available */}
-          {data.riskTier && (
-            <div className="bg-card rounded-lg border border-border p-6 shadow-sm mb-6">
-              <h3 className="text-lg font-heading font-semibold text-foreground mb-4">Risk Assessment</h3>
-              <div className="flex items-center gap-4">
-                <div>
-                  <p className="text-sm text-muted-foreground mb-1">Risk Tier</p>
-                  <span className={`text-2xl font-heading font-semibold ${
-                    data.riskTier === "Low" ? "text-green-600" : 
-                    data.riskTier === "Medium" ? "text-yellow-600" : "text-destructive"
-                  }`}>
-                    {data.riskTier}
-                  </span>
+          {/* GPA Trend and Courses */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            {/* Term GPA Trend */}
+            <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
+              <h3 className="text-lg font-heading font-semibold text-foreground mb-4">Term GPA Trend</h3>
+              {data.termGpas && data.termGpas.length > 0 ? (
+                <ResponsiveContainer width="100%" height={250}>
+                  <AreaChart data={data.termGpas}>
+                    <defs>
+                      <linearGradient id="colorGpa" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3}/>
+                        <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                    <XAxis 
+                      dataKey="term" 
+                      stroke="hsl(var(--muted-foreground))"
+                      fontSize={12}
+                    />
+                    <YAxis 
+                      domain={[0, 4.0]}
+                      stroke="hsl(var(--muted-foreground))"
+                      fontSize={12}
+                    />
+                    <Tooltip 
+                      contentStyle={{
+                        backgroundColor: "hsl(var(--card))",
+                        border: "1px solid hsl(var(--border))",
+                        borderRadius: "8px"
+                      }}
+                    />
+                    <Area 
+                      type="monotone" 
+                      dataKey="gpa" 
+                      stroke="hsl(var(--primary))" 
+                      strokeWidth={2}
+                      fill="url(#colorGpa)"
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className="flex items-center justify-center h-64 text-muted-foreground">
+                  <p className="text-sm">No term GPA data available</p>
                 </div>
-                {data.riskScore && (
-                  <div>
-                    <p className="text-sm text-muted-foreground mb-1">Risk Score</p>
-                    <p className="text-2xl font-heading font-semibold text-foreground">{data.riskScore}</p>
-                  </div>
-                )}
+              )}
+            </div>
+
+            {/* Current Courses */}
+            <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
+              <h3 className="text-lg font-heading font-semibold text-foreground mb-4">Current Courses</h3>
+              {data.courses && data.courses.length > 0 ? (
+                <div className="space-y-3">
+                  {data.courses.slice(0, 5).map((course, index) => (
+                    <div key={index} className="flex items-center justify-between p-3 bg-background rounded-lg border border-border">
+                      <div className="flex-1">
+                        <p className="font-medium text-foreground text-sm">{course.courseName}</p>
+                        <p className="text-xs text-muted-foreground">{course.credits} credits</p>
+                      </div>
+                      <span className={`text-lg font-semibold ${
+                        course.grade.startsWith('A') ? 'text-green-600' :
+                        course.grade.startsWith('B') ? 'text-blue-600' :
+                        course.grade.startsWith('C') ? 'text-yellow-600' : 'text-destructive'
+                      }`}>
+                        {course.grade}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="flex items-center justify-center h-64 text-muted-foreground">
+                  <p className="text-sm">No course data available</p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Financial Information */}
+          {data.financial && (
+            <div className="bg-card rounded-lg border border-border p-6 shadow-sm mb-6">
+              <h3 className="text-lg font-heading font-semibold text-foreground mb-4">Financial Information</h3>
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                <div>
+                  <p className="text-sm text-muted-foreground">Aid Amount</p>
+                  <p className="text-base font-medium text-foreground">
+                    ${data.financial.aidAmount?.toLocaleString() || 0}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Scholarship</p>
+                  <p className="text-base font-medium text-foreground">
+                    {data.financial.hasScholarship ? "Yes" : "No"}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Household Income</p>
+                  <p className="text-base font-medium text-foreground">
+                    ${data.financial.householdIncome?.toLocaleString() || 0}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Work Hours/Week</p>
+                  <p className="text-base font-medium text-foreground">
+                    {data.financial.workHours || 0}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Outstanding Balance</p>
+                  <p className="text-base font-medium text-foreground">
+                    ${data.financial.outstandingBalance?.toLocaleString() || 0}
+                  </p>
+                </div>
               </div>
             </div>
           )}
 
-          {/* Data Not Yet Available Messages */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          {/* Advising Notes */}
+          {data.advisingNotes && data.advisingNotes.length > 0 && (
             <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
-              <h3 className="text-lg font-heading font-semibold text-foreground mb-4">Course Enrollments</h3>
-              <div className="flex items-center justify-center h-32 text-muted-foreground">
-                <p className="text-sm">Course data will be available when enrollment CSV is uploaded</p>
+              <h3 className="text-lg font-heading font-semibold text-foreground mb-4">Recent Interventions</h3>
+              <div className="space-y-3">
+                {data.advisingNotes.slice(0, 5).map((note, index) => (
+                  <div key={index} className="flex items-start gap-3 p-3 bg-background rounded-lg border border-border">
+                    <AlertCircle className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-foreground capitalize">
+                        {note.type.replace(/_/g, ' ')}
+                      </p>
+                      <p className="text-xs text-muted-foreground">{note.date}</p>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
-
-            <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
-              <h3 className="text-lg font-heading font-semibold text-foreground mb-4">Term GPA Trend</h3>
-              <div className="flex items-center justify-center h-32 text-muted-foreground">
-                <p className="text-sm">Term GPA data will be available when performance CSV is uploaded</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-            <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
-              <h3 className="text-lg font-heading font-semibold text-foreground mb-4">LMS Engagement</h3>
-              <div className="flex items-center justify-center h-32 text-muted-foreground">
-                <p className="text-sm">LMS activity data will be available when engagement CSV is uploaded</p>
-              </div>
-            </div>
-
-            <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
-              <h3 className="text-lg font-heading font-semibold text-foreground mb-4">Attendance</h3>
-              <div className="flex items-center justify-center h-32 text-muted-foreground">
-                <p className="text-sm">Attendance data will be available when attendance CSV is uploaded</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
-            <h3 className="text-lg font-heading font-semibold text-foreground mb-4">Financial Information</h3>
-            <div className="flex items-center justify-center h-32 text-muted-foreground">
-              <p className="text-sm">Financial data will be available when financial CSV is uploaded</p>
-            </div>
-          </div>
+          )}
         </div>
       </div>
     </div>
