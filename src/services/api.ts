@@ -41,11 +41,30 @@ export default api;
 
 // API functions with mock data
 export const authAPI = {
-  login: async (username: string, password: string) => {
+  login: async (username: string, password: string, requestedRole?: "ADVISOR" | "STUDENT") => {
     // Mock login response
     await new Promise(resolve => setTimeout(resolve, 500)); // Simulate network delay
     
-    // Check if username contains "advisor" to determine role
+    // Use requested role if provided, otherwise determine from username
+    if (requestedRole === "ADVISOR") {
+      return {
+        data: {
+          token: "mock-jwt-token-advisor",
+          role: "ADVISOR" as "ADVISOR",
+          studentId: null
+        }
+      };
+    } else if (requestedRole === "STUDENT") {
+      return {
+        data: {
+          token: "mock-jwt-token-student",
+          role: "STUDENT" as "STUDENT",
+          studentId: 1
+        }
+      };
+    }
+    
+    // Fallback to checking username if no role specified
     if (username.toLowerCase().includes("advisor")) {
       return {
         data: {
