@@ -15,22 +15,41 @@ interface Course {
   grade: string;
 }
 
-interface GpaTrend {
-  term: string;
-  gpa: number;
+interface LMSActivity {
+  weeklyLogins: Array<{ week: string; count: number }>;
+  weeklyTimeSpent: Array<{ week: string; hours: number }>;
+  weeklyAssignments: Array<{ week: string; count: number }>;
+}
+
+interface Financial {
+  aidAmount: number | null;
+  hasScholarship: boolean;
+  householdIncome: number | null;
+  workHours: number | null;
+  outstandingBalance: number | null;
 }
 
 interface DashboardData {
+  // Real student profile data
   name: string;
   major: string;
   cumulativeGpa: number;
-  currentTermGpa: number;
-  attendancePct: number;
-  engagementScore: number;
-  riskTier: "High" | "Medium" | "Low";
+  creditsCompleted: number;
+  age: number;
+  gender: string;
+  residencyStatus: string;
+  firstGen: boolean;
+  
+  // Data from other CSV files
+  termGpas: Array<{ term: string; gpa: number }>;
   courses: Course[];
-  gpaTrend: GpaTrend[];
-  recommendations: string[];
+  courseGrades: Array<{ courseName: string; grade: string }>;
+  lmsActivity: LMSActivity;
+  attendanceByCourse: Array<{ courseName: string; percentage: number }>;
+  financial: Financial;
+  riskScore: number | null;
+  riskTier: "High" | "Medium" | "Low" | null;
+  advisingNotes: Array<{ type: string; date: string; content: string }>;
 }
 
 const StudentDashboard = () => {
@@ -105,102 +124,102 @@ const StudentDashboard = () => {
         </header>
 
         <div className="p-8">
-          {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <StatCard title="Cumulative GPA" value={data.cumulativeGpa.toFixed(2)} />
-            <StatCard title="Attendance %" value={`${data.attendancePct}%`} />
-            <StatCard title="Engagement Score" value={data.engagementScore.toString()} />
-            <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
-              <p className="text-sm text-muted-foreground mb-2">Risk Status</p>
-              <div className="flex items-center gap-2">
-                <span className={`text-3xl font-heading font-semibold ${
-                  data.riskTier === "Low" ? "text-green-600" : 
-                  data.riskTier === "Medium" ? "text-yellow-600" : "text-destructive"
-                }`}>
-                  {data.riskTier}
-                </span>
+          {/* Student Profile Section */}
+          <div className="bg-card rounded-lg border border-border p-6 shadow-sm mb-6">
+            <h3 className="text-lg font-heading font-semibold text-foreground mb-4">Student Profile</h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div>
+                <p className="text-sm text-muted-foreground">Major</p>
+                <p className="text-base font-medium text-foreground">{data.major}</p>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Credits Completed</p>
+                <p className="text-base font-medium text-foreground">{data.creditsCompleted}</p>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Age</p>
+                <p className="text-base font-medium text-foreground">{data.age}</p>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">First Generation</p>
+                <p className="text-base font-medium text-foreground">{data.firstGen ? "Yes" : "No"}</p>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Gender</p>
+                <p className="text-base font-medium text-foreground">{data.gender}</p>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Residency</p>
+                <p className="text-base font-medium text-foreground">{data.residencyStatus}</p>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Cumulative GPA</p>
+                <p className="text-base font-medium text-foreground">{data.cumulativeGpa.toFixed(2)}</p>
               </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-            {/* GPA Trend Chart */}
-            <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
-              <h3 className="text-lg font-heading font-semibold text-foreground mb-6">GPA Trend</h3>
-              <ResponsiveContainer width="100%" height={250}>
-                <AreaChart data={data.gpaTrend}>
-                  <defs>
-                    <linearGradient id="colorGpa" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                  <XAxis 
-                    dataKey="term" 
-                    stroke="hsl(var(--muted-foreground))"
-                    fontSize={12}
-                  />
-                  <YAxis 
-                    domain={[0, 4.0]}
-                    stroke="hsl(var(--muted-foreground))"
-                    fontSize={12}
-                  />
-                  <Tooltip 
-                    contentStyle={{
-                      backgroundColor: "hsl(var(--card))",
-                      border: "1px solid hsl(var(--border))",
-                      borderRadius: "8px"
-                    }}
-                  />
-                  <Area 
-                    type="monotone" 
-                    dataKey="gpa" 
-                    stroke="hsl(var(--primary))" 
-                    strokeWidth={2}
-                    fill="url(#colorGpa)"
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
-
-            {/* Recommended Actions */}
-            <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
-              <h3 className="text-lg font-heading font-semibold text-foreground mb-6">Recommended Actions for You</h3>
-              <div className="space-y-4">
-                {data.recommendations.map((rec, index) => {
-                  const icons = [Star, AlertCircle, MessageSquare, ClipboardList];
-                  const Icon = icons[index % icons.length];
-                  return (
-                    <div key={index} className="flex items-start gap-3">
-                      <Icon className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-muted-foreground">{rec}</p>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-
-          {/* Courses Grid */}
-          <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
-            <h3 className="text-lg font-heading font-semibold text-foreground mb-4">Current Courses</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {data.courses.map((course, index) => (
-                <div key={index} className="bg-background rounded-lg p-4 border border-border">
-                  <h4 className="font-heading font-semibold text-foreground mb-2">{course.courseName}</h4>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">{course.credits} credits</span>
-                    <span className={`font-semibold ${
-                      course.grade.startsWith('A') ? 'text-success' :
-                      course.grade.startsWith('B') ? 'text-primary' :
-                      course.grade.startsWith('C') ? 'text-accent' : 'text-destructive'
-                    }`}>
-                      {course.grade}
-                    </span>
-                  </div>
+          {/* Risk Status - Only show if data available */}
+          {data.riskTier && (
+            <div className="bg-card rounded-lg border border-border p-6 shadow-sm mb-6">
+              <h3 className="text-lg font-heading font-semibold text-foreground mb-4">Risk Assessment</h3>
+              <div className="flex items-center gap-4">
+                <div>
+                  <p className="text-sm text-muted-foreground mb-1">Risk Tier</p>
+                  <span className={`text-2xl font-heading font-semibold ${
+                    data.riskTier === "Low" ? "text-green-600" : 
+                    data.riskTier === "Medium" ? "text-yellow-600" : "text-destructive"
+                  }`}>
+                    {data.riskTier}
+                  </span>
                 </div>
-              ))}
+                {data.riskScore && (
+                  <div>
+                    <p className="text-sm text-muted-foreground mb-1">Risk Score</p>
+                    <p className="text-2xl font-heading font-semibold text-foreground">{data.riskScore}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Data Not Yet Available Messages */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
+              <h3 className="text-lg font-heading font-semibold text-foreground mb-4">Course Enrollments</h3>
+              <div className="flex items-center justify-center h-32 text-muted-foreground">
+                <p className="text-sm">Course data will be available when enrollment CSV is uploaded</p>
+              </div>
+            </div>
+
+            <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
+              <h3 className="text-lg font-heading font-semibold text-foreground mb-4">Term GPA Trend</h3>
+              <div className="flex items-center justify-center h-32 text-muted-foreground">
+                <p className="text-sm">Term GPA data will be available when performance CSV is uploaded</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
+              <h3 className="text-lg font-heading font-semibold text-foreground mb-4">LMS Engagement</h3>
+              <div className="flex items-center justify-center h-32 text-muted-foreground">
+                <p className="text-sm">LMS activity data will be available when engagement CSV is uploaded</p>
+              </div>
+            </div>
+
+            <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
+              <h3 className="text-lg font-heading font-semibold text-foreground mb-4">Attendance</h3>
+              <div className="flex items-center justify-center h-32 text-muted-foreground">
+                <p className="text-sm">Attendance data will be available when attendance CSV is uploaded</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
+            <h3 className="text-lg font-heading font-semibold text-foreground mb-4">Financial Information</h3>
+            <div className="flex items-center justify-center h-32 text-muted-foreground">
+              <p className="text-sm">Financial data will be available when financial CSV is uploaded</p>
             </div>
           </div>
         </div>
