@@ -128,14 +128,25 @@ export const advisorAPI = {
       };
     });
     
-    // Calculate counts
+    // Calculate counts for all students
     const highRiskStudents = studentsWithRisk.filter(s => s.riskTier === "High").length;
     const mediumRiskStudents = studentsWithRisk.filter(s => s.riskTier === "Medium").length;
     const lowRiskStudents = studentsWithRisk.filter(s => s.riskTier === "Low").length;
     const averageAttendance = studentsWithRisk.reduce((sum, s) => sum + s.attendancePct, 0) / totalStudents;
     
+    // Optimize: Only load all high-risk students + top 10 medium + top 10 low
+    const highRisk = studentsWithRisk.filter(s => s.riskTier === "High");
+    const mediumRisk = studentsWithRisk.filter(s => s.riskTier === "Medium")
+      .sort((a, b) => b.riskScore - a.riskScore)
+      .slice(0, 10);
+    const lowRisk = studentsWithRisk.filter(s => s.riskTier === "Low")
+      .sort((a, b) => a.cumulative_gpa - b.cumulative_gpa)
+      .slice(0, 10);
+    
+    const optimizedStudents = [...highRisk, ...mediumRisk, ...lowRisk];
+    
     // Apply filters
-    let filteredStudents = studentsWithRisk;
+    let filteredStudents = optimizedStudents;
     if (riskFilter !== "all") {
       filteredStudents = filteredStudents.filter(s => s.riskTier.toLowerCase() === riskFilter);
     }
