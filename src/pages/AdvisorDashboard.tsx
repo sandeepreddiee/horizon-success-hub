@@ -99,7 +99,7 @@ const AdvisorDashboard = () => {
       
       <div className="flex-1">
         <header className="bg-card border-b border-border px-8 py-6 flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-foreground">Advisor Dashboard</h1>
+          <h1 className="text-2xl font-heading font-semibold text-foreground">Advisor Dashboard</h1>
           <div className="flex items-center gap-4">
             <button className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
               <Users className="w-5 h-5 text-muted-foreground" />
@@ -120,7 +120,7 @@ const AdvisorDashboard = () => {
             <StatCard title="Total Students Assigned" value={data.totalStudents.toString()} />
             <StatCard title="High-Risk Students" value={data.highRiskStudents.toString()} trend="danger" />
             <StatCard title="Average Term GPA" value={data.averageTermGpa.toFixed(2)} />
-            <StatCard title="Average Attendance %" value={`${data.averageAttendance.toFixed(0)}%`} />
+            <StatCard title="Average Attendance %" value={`${data.averageAttendance}%`} />
           </div>
 
           {/* Filters */}

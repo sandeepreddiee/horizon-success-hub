@@ -13,7 +13,7 @@ interface Note {
   noteId: number;
   content: string;
   timestamp: string;
-  advisorName: string;
+  // Removed advisorName - not in dataset
 }
 
 const AdvisorNotes = () => {
@@ -83,7 +83,7 @@ const AdvisorNotes = () => {
           <Link to="/advisor/dashboard" className="text-muted-foreground hover:text-foreground transition-colors">
             <ArrowLeft className="w-5 h-5" />
           </Link>
-          <h1 className="text-2xl font-bold text-foreground">Student Notes & Interventions</h1>
+          <h1 className="text-2xl font-heading font-semibold text-foreground">Interventions & Notes</h1>
         </div>
         <div className="flex items-center gap-4">
           <button className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
@@ -107,8 +107,8 @@ const AdvisorNotes = () => {
         ) : (
           <>
             {/* Add New Note */}
-            <div className="bg-card rounded-lg border border-border p-6 mb-6">
-              <h3 className="text-lg font-semibold text-foreground mb-4">Add New Note</h3>
+            <div className="bg-card rounded-lg border border-border p-6 mb-6 shadow-sm">
+              <h3 className="text-lg font-heading font-semibold text-foreground mb-4">Add New Intervention Note</h3>
               <Textarea
                 placeholder="Enter your note or intervention details..."
                 value={newNote}
@@ -116,27 +116,26 @@ const AdvisorNotes = () => {
                 rows={4}
                 className="mb-4"
               />
-              <Button onClick={handleAddNote} disabled={isSaving || !newNote.trim()}>
+              <Button onClick={handleAddNote} disabled={isSaving || !newNote.trim()} className="bg-primary hover:bg-primary/90">
                 {isSaving ? "Saving..." : "Save Note"}
               </Button>
             </div>
 
             {/* Notes History */}
-            <div className="bg-card rounded-lg border border-border p-6">
-              <h3 className="text-lg font-semibold text-foreground mb-4">Notes History</h3>
+            <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
+              <h3 className="text-lg font-heading font-semibold text-foreground mb-4">Past Interventions</h3>
               {notes.length === 0 ? (
                 <p className="text-muted-foreground text-center py-8">No notes yet for this student.</p>
               ) : (
                 <div className="space-y-4">
                   {notes.map((note) => (
-                    <div key={note.noteId} className="border border-border rounded-lg p-4">
+                    <div key={note.noteId} className="border border-border rounded-lg p-4 bg-background">
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm font-medium text-foreground">{note.advisorName}</span>
                         <span className="text-xs text-muted-foreground">
-                          {format(new Date(note.timestamp), "MMM dd, yyyy 'at' h:mm a")}
+                          {format(new Date(note.timestamp), "MMMM dd, yyyy")}
                         </span>
                       </div>
-                      <p className="text-sm text-muted-foreground">{note.content}</p>
+                      <p className="text-sm text-foreground">{note.content}</p>
                     </div>
                   ))}
                 </div>

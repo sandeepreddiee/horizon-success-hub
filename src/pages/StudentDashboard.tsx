@@ -89,7 +89,7 @@ const StudentDashboard = () => {
       
       <div className="flex-1">
         <header className="bg-card border-b border-border px-8 py-6 flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-foreground">Welcome, {data.name.split(" ")[0]}!</h1>
+          <h1 className="text-2xl font-heading font-semibold text-foreground">Welcome, {data.name.split(" ")[0]}!</h1>
           <div className="flex items-center gap-4">
             <button className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
               <Users className="w-5 h-5 text-muted-foreground" />
@@ -125,8 +125,8 @@ const StudentDashboard = () => {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
             {/* GPA Trend Chart */}
-            <div className="bg-card rounded-lg border border-border p-6">
-              <h3 className="text-lg font-semibold text-foreground mb-6">GPA Trend</h3>
+            <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
+              <h3 className="text-lg font-heading font-semibold text-foreground mb-6">GPA Trend</h3>
               <ResponsiveContainer width="100%" height={250}>
                 <AreaChart data={data.gpaTrend}>
                   <defs>
@@ -165,8 +165,8 @@ const StudentDashboard = () => {
             </div>
 
             {/* Recommended Actions */}
-            <div className="bg-card rounded-lg border border-border p-6">
-              <h3 className="text-lg font-semibold text-foreground mb-6">Recommended Actions for You</h3>
+            <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
+              <h3 className="text-lg font-heading font-semibold text-foreground mb-6">Recommended Actions for You</h3>
               <div className="space-y-4">
                 {data.recommendations.map((rec, index) => {
                   const icons = [Star, AlertCircle, MessageSquare, ClipboardList];
@@ -183,18 +183,18 @@ const StudentDashboard = () => {
           </div>
 
           {/* Courses Grid */}
-          <div className="bg-card rounded-lg border border-border p-6">
-            <h3 className="text-lg font-semibold text-foreground mb-4">Current Courses</h3>
+          <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
+            <h3 className="text-lg font-heading font-semibold text-foreground mb-4">Current Courses</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {data.courses.map((course, index) => (
-                <div key={index} className="bg-muted/50 rounded-lg p-4 border border-border">
-                  <h4 className="font-semibold text-foreground mb-2">{course.courseName}</h4>
+                <div key={index} className="bg-background rounded-lg p-4 border border-border">
+                  <h4 className="font-heading font-semibold text-foreground mb-2">{course.courseName}</h4>
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-muted-foreground">{course.credits} credits</span>
                     <span className={`font-semibold ${
-                      course.grade.startsWith('A') ? 'text-green-500' :
+                      course.grade.startsWith('A') ? 'text-success' :
                       course.grade.startsWith('B') ? 'text-primary' :
-                      course.grade.startsWith('C') ? 'text-yellow-500' : 'text-destructive'
+                      course.grade.startsWith('C') ? 'text-accent' : 'text-destructive'
                     }`}>
                       {course.grade}
                     </span>

@@ -112,8 +112,8 @@ export const advisorAPI = {
     return {
       data: {
         notes: [
-          { noteId: 1, content: "Student showed improvement in attendance this week. Encouraged to continue.", timestamp: "2024-11-15T10:30:00Z", advisorName: "Dr. Sarah Smith" },
-          { noteId: 2, content: "Discussed study strategies for upcoming midterms. Student seems motivated.", timestamp: "2024-11-10T14:15:00Z", advisorName: "Dr. Sarah Smith" },
+          { noteId: 1, content: "Student showed improvement in attendance this week. Encouraged to continue.", timestamp: "2024-11-15T10:30:00Z" },
+          { noteId: 2, content: "Discussed study strategies for upcoming midterms. Student seems motivated.", timestamp: "2024-11-10T14:15:00Z" },
         ]
       }
     };
@@ -124,8 +124,7 @@ export const advisorAPI = {
       data: {
         noteId: Date.now(),
         content,
-        timestamp: new Date().toISOString(),
-        advisorName: "Dr. Sarah Smith"
+        timestamp: new Date().toISOString()
       }
     };
   },

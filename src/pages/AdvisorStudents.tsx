@@ -6,15 +6,16 @@ import { Input } from "@/components/ui/input";
 import RiskBadge from "@/components/RiskBadge";
 import { Link } from "react-router-dom";
 
+// Mock data using ONLY valid dataset fields
 const mockStudents = [
-  { studentId: 1, name: "Aarav Patel", major: "Computer Science", year: "Junior", riskTier: "High" as "High", email: "aarav.patel@horizonu.edu" },
-  { studentId: 2, name: "Emily Nguyen", major: "Biology", year: "Sophomore", riskTier: "Low" as "Low", email: "emily.nguyen@horizonu.edu" },
-  { studentId: 3, name: "Daniel Owusu", major: "Business Admin", year: "Senior", riskTier: "Medium" as "Medium", email: "daniel.owusu@horizonu.edu" },
-  { studentId: 4, name: "Sofia Martinez", major: "Art History", year: "Junior", riskTier: "Low" as "Low", email: "sofia.martinez@horizonu.edu" },
-  { studentId: 5, name: "Mei Chen", major: "Engineering", year: "Freshman", riskTier: "High" as "High", email: "mei.chen@horizonu.edu" },
-  { studentId: 6, name: "James Wilson", major: "Psychology", year: "Senior", riskTier: "Medium" as "Medium", email: "james.wilson@horizonu.edu" },
-  { studentId: 7, name: "Fatima Hassan", major: "Computer Science", year: "Sophomore", riskTier: "Low" as "Low", email: "fatima.hassan@horizonu.edu" },
-  { studentId: 8, name: "Lucas Brown", major: "Engineering", year: "Junior", riskTier: "High" as "High", email: "lucas.brown@horizonu.edu" },
+  { studentId: 1, name: "Aarav Patel", major: "Computer Science", riskTier: "High" as "High" },
+  { studentId: 2, name: "Emily Nguyen", major: "Biology", riskTier: "Low" as "Low" },
+  { studentId: 3, name: "Daniel Owusu", major: "Business Admin", riskTier: "Medium" as "Medium" },
+  { studentId: 4, name: "Sofia Martinez", major: "Art History", riskTier: "Low" as "Low" },
+  { studentId: 5, name: "Mei Chen", major: "Engineering", riskTier: "High" as "High" },
+  { studentId: 6, name: "James Wilson", major: "Psychology", riskTier: "Medium" as "Medium" },
+  { studentId: 7, name: "Fatima Hassan", major: "Computer Science", riskTier: "Low" as "Low" },
+  { studentId: 8, name: "Lucas Brown", major: "Engineering", riskTier: "High" as "High" },
 ];
 
 const AdvisorStudents = () => {
@@ -23,7 +24,6 @@ const AdvisorStudents = () => {
 
   const filteredStudents = mockStudents.filter(student =>
     student.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    student.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
     student.major.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -33,7 +33,7 @@ const AdvisorStudents = () => {
       
       <div className="flex-1">
         <header className="bg-card border-b border-border px-8 py-6 flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-foreground">My Students</h1>
+          <h1 className="text-2xl font-heading font-semibold text-foreground">My Students</h1>
           <div className="flex items-center gap-4">
             <button className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
               <Users className="w-5 h-5 text-muted-foreground" />
@@ -54,7 +54,7 @@ const AdvisorStudents = () => {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground" />
               <Input
                 type="text"
-                placeholder="Search students by name, email, or major..."
+                placeholder="Search students by name or major..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10"
@@ -71,16 +71,10 @@ const AdvisorStudents = () => {
               >
                 <div className="flex items-start justify-between mb-4">
                   <div>
-                    <h3 className="text-lg font-semibold text-foreground mb-1">{student.name}</h3>
-                    <p className="text-sm text-muted-foreground">{student.year}</p>
+                    <h3 className="text-lg font-heading font-semibold text-foreground mb-1">{student.name}</h3>
+                    <p className="text-sm text-muted-foreground">{student.major}</p>
                   </div>
                   <RiskBadge level={student.riskTier} />
-                </div>
-                <div className="space-y-2">
-                  <p className="text-sm text-muted-foreground">
-                    <span className="font-medium text-foreground">Major:</span> {student.major}
-                  </p>
-                  <p className="text-sm text-muted-foreground break-all">{student.email}</p>
                 </div>
               </Link>
             ))}
