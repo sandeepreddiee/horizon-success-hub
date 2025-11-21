@@ -109,7 +109,7 @@ const AdvisorStudents = () => {
                 {students.map((student) => (
                   <Link
                     key={student.studentId}
-                    to={`/advisor/student/${student.studentId}/notes`}
+                    to={`/advisor/student/${student.studentId}`}
                     className="bg-card rounded-lg border border-border p-6 hover:shadow-lg transition-all hover:border-primary/50"
                   >
                     <div className="flex items-start justify-between mb-4">
