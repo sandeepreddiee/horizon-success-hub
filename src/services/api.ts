@@ -115,8 +115,12 @@ export const advisorAPI = {
     const highRiskStudents = studentsWithRisk.filter(s => s.riskTier === "High").length;
     const averageAttendance = studentsWithRisk.reduce((sum, s) => sum + s.attendancePct, 0) / totalStudents;
     
-    // Get first 20 students for display
-    const studentRows = studentsWithRisk.slice(0, 20).map(s => ({
+    // Get a representative sample: all high-risk students + some medium and low
+    const highRisk = studentsWithRisk.filter(s => s.riskTier === "High");
+    const mediumRisk = studentsWithRisk.filter(s => s.riskTier === "Medium").slice(0, 50);
+    const lowRisk = studentsWithRisk.filter(s => s.riskTier === "Low").slice(0, 50);
+    
+    const studentRows = [...highRisk, ...mediumRisk, ...lowRisk].map(s => ({
       studentId: s.student_id,
       name: s.name,
       major: s.major,
