@@ -13,6 +13,10 @@ import AdvisorInterventions from "./pages/AdvisorInterventions";
 import AdvisorReports from "./pages/AdvisorReports";
 import AdvisorResources from "./pages/AdvisorResources";
 import StudentDashboard from "./pages/StudentDashboard";
+import StudentCourses from "./pages/StudentCourses";
+import StudentProgress from "./pages/StudentProgress";
+import StudentResources from "./pages/StudentResources";
+import StudentContact from "./pages/StudentContact";
 import AdvisorNotes from "./pages/AdvisorNotes";
 import NotFound from "./pages/NotFound";
 
@@ -102,6 +106,38 @@ const App = () => (
               element={
                 <ProtectedRoute requiredRole="STUDENT">
                   <StudentDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/student/courses"
+              element={
+                <ProtectedRoute requiredRole="STUDENT">
+                  <StudentCourses />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/student/progress"
+              element={
+                <ProtectedRoute requiredRole="STUDENT">
+                  <StudentProgress />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/student/resources"
+              element={
+                <ProtectedRoute requiredRole="STUDENT">
+                  <StudentResources />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/student/contact"
+              element={
+                <ProtectedRoute requiredRole="STUDENT">
+                  <StudentContact />
                 </ProtectedRoute>
               }
             />
