@@ -132,15 +132,18 @@ const StudentDashboard = () => {
             <StatCard title="Credits Completed" value={data.creditsCompleted.toString()} />
             <StatCard title="Average Attendance" value={`${data.averageAttendance?.toFixed(1) || 0}%`} />
             <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
-              <p className="text-sm text-muted-foreground mb-2">Risk Status</p>
-              <div className="flex items-center gap-2">
+              <p className="text-sm text-muted-foreground mb-2">ML Risk Prediction</p>
+              <div className="flex flex-col gap-1">
                 {data.riskTier ? (
-                  <span className={`text-3xl font-heading font-semibold ${
-                    data.riskTier === "Low" ? "text-green-600" : 
-                    data.riskTier === "Medium" ? "text-yellow-600" : "text-destructive"
-                  }`}>
-                    {data.riskTier}
-                  </span>
+                  <>
+                    <span className={`text-3xl font-heading font-semibold ${
+                      data.riskTier === "Low" ? "text-green-600" : 
+                      data.riskTier === "Medium" ? "text-yellow-600" : "text-destructive"
+                    }`}>
+                      {data.riskTier}
+                    </span>
+                    <p className="text-xs text-muted-foreground">Based on multiple factors</p>
+                  </>
                 ) : (
                   <span className="text-sm text-muted-foreground">No data</span>
                 )}
@@ -180,6 +183,77 @@ const StudentDashboard = () => {
               )}
             </div>
           </div>
+
+          {/* LMS Activity Overview */}
+          {data.lmsActivity && (data.lmsActivity.weeklyLogins.length > 0 || data.lmsActivity.weeklyTimeSpent.length > 0) && (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+              {/* Weekly Logins */}
+              {data.lmsActivity.weeklyLogins.length > 0 && (
+                <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
+                  <h3 className="text-lg font-heading font-semibold text-foreground mb-4">Weekly Logins</h3>
+                  <ResponsiveContainer width="100%" height={200}>
+                    <AreaChart data={data.lmsActivity.weeklyLogins}>
+                      <defs>
+                        <linearGradient id="colorLogins" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3}/>
+                          <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                      <XAxis dataKey="week" stroke="hsl(var(--muted-foreground))" fontSize={10} />
+                      <YAxis stroke="hsl(var(--muted-foreground))" fontSize={10} />
+                      <Tooltip contentStyle={{backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px"}} />
+                      <Area type="monotone" dataKey="count" stroke="hsl(var(--primary))" strokeWidth={2} fill="url(#colorLogins)" />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </div>
+              )}
+
+              {/* Weekly Time Spent */}
+              {data.lmsActivity.weeklyTimeSpent.length > 0 && (
+                <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
+                  <h3 className="text-lg font-heading font-semibold text-foreground mb-4">Time on Platform (hrs)</h3>
+                  <ResponsiveContainer width="100%" height={200}>
+                    <AreaChart data={data.lmsActivity.weeklyTimeSpent}>
+                      <defs>
+                        <linearGradient id="colorTime" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3}/>
+                          <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                      <XAxis dataKey="week" stroke="hsl(var(--muted-foreground))" fontSize={10} />
+                      <YAxis stroke="hsl(var(--muted-foreground))" fontSize={10} />
+                      <Tooltip contentStyle={{backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px"}} />
+                      <Area type="monotone" dataKey="hours" stroke="hsl(var(--primary))" strokeWidth={2} fill="url(#colorTime)" />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </div>
+              )}
+
+              {/* Weekly Assignments */}
+              {data.lmsActivity.weeklyAssignments.length > 0 && (
+                <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
+                  <h3 className="text-lg font-heading font-semibold text-foreground mb-4">Assignments Submitted</h3>
+                  <ResponsiveContainer width="100%" height={200}>
+                    <AreaChart data={data.lmsActivity.weeklyAssignments}>
+                      <defs>
+                        <linearGradient id="colorAssignments" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3}/>
+                          <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                      <XAxis dataKey="week" stroke="hsl(var(--muted-foreground))" fontSize={10} />
+                      <YAxis stroke="hsl(var(--muted-foreground))" fontSize={10} />
+                      <Tooltip contentStyle={{backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px"}} />
+                      <Area type="monotone" dataKey="count" stroke="hsl(var(--primary))" strokeWidth={2} fill="url(#colorAssignments)" />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* GPA Trend and Courses */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">

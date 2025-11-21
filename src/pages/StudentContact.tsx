@@ -43,32 +43,32 @@ const StudentContact = () => {
         </header>
 
         <div className="p-8">
-          {/* Advisor Info */}
+          {/* Academic Advising */}
           <div className="bg-card rounded-lg border border-border p-6 shadow-sm mb-8">
             <div className="flex items-start gap-6">
               <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
                 <Users className="w-10 h-10 text-primary" />
               </div>
               <div className="flex-1">
-                <h2 className="text-xl font-heading font-semibold text-foreground mb-1">Dr. Sarah Smith</h2>
-                <p className="text-sm text-muted-foreground mb-4">Academic Advisor • Computer Science Department</p>
+                <h2 className="text-xl font-heading font-semibold text-foreground mb-1">Academic Advising Center</h2>
+                <p className="text-sm text-muted-foreground mb-4">General Academic Support & Guidance</p>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <Mail className="w-4 h-4" />
-                    <span>sarah.smith@horizonu.edu</span>
+                    <span>advising@horizonu.edu</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <Phone className="w-4 h-4" />
-                    <span>(555) 123-4567</span>
+                    <span>(555) 100-2000</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <Calendar className="w-4 h-4" />
-                    <span>Office Hours: Mon-Fri 2-4 PM</span>
+                    <span>Walk-in Hours: Mon-Fri 9 AM-5 PM</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <FileText className="w-4 h-4" />
-                    <span>Office: Building A, Room 305</span>
+                    <span>Location: Student Services Building, 2nd Floor</span>
                   </div>
                 </div>
               </div>
@@ -121,30 +121,29 @@ const StudentContact = () => {
             </div>
           </div>
 
-          {/* Recent Conversations */}
+          {/* Help Resources */}
           <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
-            <h3 className="text-lg font-heading font-semibold text-foreground mb-4">Recent Conversations</h3>
-            <div className="space-y-4">
-              <div className="border-b border-border pb-4">
-                <div className="flex items-start justify-between mb-2">
-                  <h4 className="font-medium text-foreground">Course Registration Guidance</h4>
-                  <span className="text-xs text-muted-foreground">Nov 15, 2024</span>
-                </div>
-                <p className="text-sm text-muted-foreground">Discussed spring semester course selection and prerequisites...</p>
+            <h3 className="text-lg font-heading font-semibold text-foreground mb-4">Additional Support Resources</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="p-4 bg-background rounded-lg border border-border">
+                <h4 className="font-medium text-foreground mb-2">Tutoring Center</h4>
+                <p className="text-sm text-muted-foreground mb-2">Free tutoring services for all courses</p>
+                <p className="text-xs text-primary">tutoring@horizonu.edu</p>
               </div>
-              <div className="border-b border-border pb-4">
-                <div className="flex items-start justify-between mb-2">
-                  <h4 className="font-medium text-foreground">Academic Progress Review</h4>
-                  <span className="text-xs text-muted-foreground">Oct 28, 2024</span>
-                </div>
-                <p className="text-sm text-muted-foreground">Reviewed current GPA and discussed strategies for improvement...</p>
+              <div className="p-4 bg-background rounded-lg border border-border">
+                <h4 className="font-medium text-foreground mb-2">Career Services</h4>
+                <p className="text-sm text-muted-foreground mb-2">Resume help, job search, internships</p>
+                <p className="text-xs text-primary">careers@horizonu.edu</p>
               </div>
-              <div className="pb-4">
-                <div className="flex items-start justify-between mb-2">
-                  <h4 className="font-medium text-foreground">Career Planning Discussion</h4>
-                  <span className="text-xs text-muted-foreground">Oct 10, 2024</span>
-                </div>
-                <p className="text-sm text-muted-foreground">Explored internship opportunities and career paths...</p>
+              <div className="p-4 bg-background rounded-lg border border-border">
+                <h4 className="font-medium text-foreground mb-2">Counseling Services</h4>
+                <p className="text-sm text-muted-foreground mb-2">Mental health and wellness support</p>
+                <p className="text-xs text-primary">counseling@horizonu.edu</p>
+              </div>
+              <div className="p-4 bg-background rounded-lg border border-border">
+                <h4 className="font-medium text-foreground mb-2">Financial Aid Office</h4>
+                <p className="text-sm text-muted-foreground mb-2">Scholarships, loans, and aid questions</p>
+                <p className="text-xs text-primary">finaid@horizonu.edu</p>
               </div>
             </div>
           </div>
