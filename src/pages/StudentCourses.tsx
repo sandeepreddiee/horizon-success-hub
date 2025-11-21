@@ -1,58 +1,76 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import StudentSidebar from "@/components/StudentSidebar";
 import { useAuth } from "@/context/AuthContext";
-import { LogOut, Users, BookOpen, Clock, MapPin, User } from "lucide-react";
+import { LogOut, Users, BookOpen, TrendingUp, TrendingDown } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { studentAPI } from "@/services/api";
+import { useToast } from "@/hooks/use-toast";
 
-const mockCourses = [
-  {
-    id: 1,
-    name: "Data Structures",
-    code: "CS 301",
-    credits: 4,
-    grade: "B+",
-    instructor: "Dr. Smith",
-    schedule: "MWF 10:00-11:00 AM",
-    location: "Room 204",
-    progress: 75
-  },
-  {
-    id: 2,
-    name: "Web Development",
-    code: "CS 220",
-    credits: 3,
-    grade: "A-",
-    instructor: "Prof. Johnson",
-    schedule: "TTh 2:00-3:30 PM",
-    location: "Room 301",
-    progress: 82
-  },
-  {
-    id: 3,
-    name: "Database Systems",
-    code: "CS 315",
-    credits: 3,
-    grade: "B",
-    instructor: "Dr. Williams",
-    schedule: "MWF 1:00-2:00 PM",
-    location: "Room 150",
-    progress: 68
-  },
-  {
-    id: 4,
-    name: "Software Engineering",
-    code: "CS 420",
-    credits: 4,
-    grade: "A",
-    instructor: "Prof. Davis",
-    schedule: "TTh 10:00-11:30 AM",
-    location: "Room 210",
-    progress: 90
-  },
-];
+interface Course {
+  courseName: string;
+  credits: number;
+  grade: string;
+  numericGrade: number;
+  courseGpa: number;
+}
+
+interface AttendanceByCourse {
+  courseName: string;
+  percentage: number;
+}
 
 const StudentCourses = () => {
-  const { logout } = useAuth();
+  const { logout, studentId } = useAuth();
+  const { toast } = useToast();
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [attendance, setAttendance] = useState<AttendanceByCourse[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!studentId) return;
+      
+      try {
+        const response = await studentAPI.getDashboard(studentId);
+        setCourses(response.data.courses || []);
+        setAttendance(response.data.attendanceByCourse || []);
+      } catch (error: any) {
+        console.error("Courses error:", error);
+        toast({
+          title: "Error loading courses",
+          description: error.message,
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [studentId, toast]);
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen bg-background">
+        <StudentSidebar />
+        <div className="flex-1 flex items-center justify-center">
+          <p className="text-muted-foreground">Loading courses...</p>
+        </div>
+      </div>
+    );
+  }
+
+  const getGradeColor = (grade: string) => {
+    if (grade.startsWith('A')) return 'text-green-600';
+    if (grade.startsWith('B')) return 'text-blue-600';
+    if (grade.startsWith('C')) return 'text-yellow-600';
+    return 'text-destructive';
+  };
+
+  const getAttendanceForCourse = (courseName: string) => {
+    const courseAttendance = attendance.find(a => a.courseName === courseName);
+    return courseAttendance?.percentage || 0;
+  };
 
   return (
     <div className="flex min-h-screen bg-background">
@@ -76,72 +94,96 @@ const StudentCourses = () => {
         </header>
 
         <div className="p-8">
-          <Tabs defaultValue="current" className="w-full">
-            <TabsList className="mb-6">
-              <TabsTrigger value="current">Current Semester</TabsTrigger>
-              <TabsTrigger value="completed">Completed Courses</TabsTrigger>
-            </TabsList>
+          {/* Course Summary */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
+              <p className="text-sm text-muted-foreground mb-2">Total Courses</p>
+              <p className="text-3xl font-heading font-bold text-foreground">{courses.length}</p>
+            </div>
+            <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
+              <p className="text-sm text-muted-foreground mb-2">Total Credits</p>
+              <p className="text-3xl font-heading font-bold text-foreground">
+                {courses.reduce((sum, c) => sum + c.credits, 0)}
+              </p>
+            </div>
+            <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
+              <p className="text-sm text-muted-foreground mb-2">Average Grade</p>
+              <p className="text-3xl font-heading font-bold text-foreground">
+                {courses.length > 0 
+                  ? (courses.reduce((sum, c) => sum + c.courseGpa, 0) / courses.length).toFixed(2)
+                  : '0.00'
+                }
+              </p>
+            </div>
+          </div>
 
-            <TabsContent value="current" className="space-y-6">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {mockCourses.map((course) => (
-                  <div key={course.id} className="bg-card rounded-lg border border-border p-6 shadow-sm">
+          {/* Course List */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {courses.length > 0 ? (
+              courses.map((course, index) => {
+                const attendancePct = getAttendanceForCourse(course.courseName);
+                return (
+                  <div key={index} className="bg-card rounded-lg border border-border p-6 shadow-sm hover:shadow-lg transition-shadow">
                     <div className="flex items-start justify-between mb-4">
-                      <div>
-                        <h3 className="text-lg font-heading font-semibold text-foreground mb-1">{course.name}</h3>
-                        <p className="text-sm text-muted-foreground">{course.code} • {course.credits} Credits</p>
+                      <div className="flex-1">
+                        <h3 className="text-lg font-heading font-semibold text-foreground mb-1">{course.courseName}</h3>
+                        <p className="text-sm text-muted-foreground">{course.credits} Credits</p>
                       </div>
-                      <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
-                        course.grade.startsWith('A') ? 'bg-green-500/10 text-green-600' :
-                        course.grade.startsWith('B') ? 'bg-primary/10 text-primary' :
-                        'bg-yellow-500/10 text-yellow-600'
-                      }`}>
+                      <span className={`text-2xl font-heading font-bold ${getGradeColor(course.grade)}`}>
                         {course.grade}
                       </span>
                     </div>
 
-                    <div className="space-y-3 mb-4">
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <User className="w-4 h-4" />
-                        <span>{course.instructor}</span>
+                    <div className="space-y-3">
+                      {/* Grade Info */}
+                      <div className="flex items-center justify-between p-3 bg-background rounded-lg border border-border">
+                        <span className="text-sm text-muted-foreground">Course GPA</span>
+                        <span className="text-sm font-semibold text-foreground">{course.courseGpa.toFixed(2)}</span>
                       </div>
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <Clock className="w-4 h-4" />
-                        <span>{course.schedule}</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <MapPin className="w-4 h-4" />
-                        <span>{course.location}</span>
-                      </div>
-                    </div>
 
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-muted-foreground">Course Progress</span>
-                        <span className="font-semibold text-foreground">{course.progress}%</span>
+                      {/* Numeric Grade */}
+                      <div className="flex items-center justify-between p-3 bg-background rounded-lg border border-border">
+                        <span className="text-sm text-muted-foreground">Numeric Grade</span>
+                        <span className="text-sm font-semibold text-foreground">{course.numericGrade.toFixed(1)}</span>
                       </div>
-                      <div className="w-full bg-muted rounded-full h-2">
-                        <div 
-                          className="bg-primary rounded-full h-2 transition-all"
-                          style={{ width: `${course.progress}%` }}
-                        />
-                      </div>
+
+                      {/* Attendance */}
+                      {attendancePct > 0 && (
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm text-muted-foreground">Attendance</span>
+                            <span className={`text-sm font-semibold ${
+                              attendancePct >= 90 ? 'text-green-600' :
+                              attendancePct >= 75 ? 'text-yellow-600' : 'text-destructive'
+                            }`}>
+                              {attendancePct.toFixed(1)}%
+                            </span>
+                          </div>
+                          <div className="w-full bg-muted rounded-full h-2">
+                            <div 
+                              className={`rounded-full h-2 transition-all ${
+                                attendancePct >= 90 ? 'bg-green-600' :
+                                attendancePct >= 75 ? 'bg-yellow-600' : 'bg-destructive'
+                              }`}
+                              style={{ width: `${Math.min(attendancePct, 100)}%` }}
+                            />
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
-                ))}
-              </div>
-            </TabsContent>
-
-            <TabsContent value="completed">
-              <div className="bg-card rounded-lg border border-border p-12 text-center">
+                );
+              })
+            ) : (
+              <div className="col-span-2 bg-card rounded-lg border border-border p-12 text-center">
                 <BookOpen className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-foreground mb-2">Completed Courses</h3>
+                <h3 className="text-lg font-semibold text-foreground mb-2">No Courses Found</h3>
                 <p className="text-sm text-muted-foreground">
-                  Your completed courses history will appear here
+                  Course enrollment data will appear here
                 </p>
               </div>
-            </TabsContent>
-          </Tabs>
+            )}
+          </div>
         </div>
       </div>
     </div>

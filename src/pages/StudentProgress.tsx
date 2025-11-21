@@ -1,29 +1,70 @@
+import { useEffect, useState } from "react";
 import StudentSidebar from "@/components/StudentSidebar";
 import { useAuth } from "@/context/AuthContext";
-import { LogOut, Users, TrendingUp, Award, Target } from "lucide-react";
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
+import { LogOut, Users, TrendingUp, TrendingDown, Target, AlertCircle } from "lucide-react";
+import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
+import { studentAPI } from "@/services/api";
+import { useToast } from "@/hooks/use-toast";
 
-const semesterData = [
-  { semester: "Fall 2023", gpa: 3.2, credits: 15 },
-  { semester: "Spring 2024", gpa: 3.4, credits: 16 },
-  { semester: "Summer 2024", gpa: 3.7, credits: 6 },
-  { semester: "Fall 2024", gpa: 3.9, credits: 15 },
-];
-
-const achievements = [
-  { title: "Dean's List", semester: "Fall 2024", description: "GPA above 3.75" },
-  { title: "Perfect Attendance", semester: "Spring 2024", description: "100% class attendance" },
-  { title: "Academic Excellence", semester: "Fall 2023", description: "Multiple A grades" },
-];
-
-const goals = [
-  { title: "Maintain 3.8+ GPA", progress: 87, status: "On Track" },
-  { title: "Complete Capstone Project", progress: 45, status: "In Progress" },
-  { title: "Attend All Classes", progress: 95, status: "Excellent" },
-];
+interface TermGPA {
+  term: string;
+  gpa: number;
+}
 
 const StudentProgress = () => {
-  const { logout } = useAuth();
+  const { logout, studentId } = useAuth();
+  const { toast } = useToast();
+  const [termGpas, setTermGpas] = useState<TermGPA[]>([]);
+  const [cumulativeGpa, setCumulativeGpa] = useState(0);
+  const [creditsCompleted, setCreditsCompleted] = useState(0);
+  const [averageAttendance, setAverageAttendance] = useState(0);
+  const [riskTier, setRiskTier] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!studentId) return;
+      
+      try {
+        const response = await studentAPI.getDashboard(studentId);
+        setTermGpas(response.data.termGpas || []);
+        setCumulativeGpa(response.data.cumulativeGpa);
+        setCreditsCompleted(response.data.creditsCompleted);
+        setAverageAttendance(response.data.averageAttendance);
+        setRiskTier(response.data.riskTier);
+      } catch (error: any) {
+        console.error("Progress error:", error);
+        toast({
+          title: "Error loading progress",
+          description: error.message,
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [studentId, toast]);
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen bg-background">
+        <StudentSidebar />
+        <div className="flex-1 flex items-center justify-center">
+          <p className="text-muted-foreground">Loading progress...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Calculate GPA trend
+  const gpaTrend = termGpas.length >= 2 
+    ? termGpas[termGpas.length - 1].gpa - termGpas[termGpas.length - 2].gpa 
+    : 0;
+
+  // Calculate degree progress (assuming 120 credits needed)
+  const degreeProgress = (creditsCompleted / 120) * 100;
 
   return (
     <div className="flex min-h-screen bg-background">
@@ -47,114 +88,151 @@ const StudentProgress = () => {
         </header>
 
         <div className="p-8">
+          {/* Progress Summary */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
+              <div className="flex items-center gap-2 mb-2">
+                <TrendingUp className="w-4 h-4 text-primary" />
+                <span className="text-sm text-muted-foreground">Cumulative GPA</span>
+              </div>
+              <p className="text-3xl font-heading font-bold text-foreground">{cumulativeGpa.toFixed(2)}</p>
+              {gpaTrend !== 0 && (
+                <div className={`flex items-center gap-1 mt-2 text-sm ${
+                  gpaTrend > 0 ? 'text-green-600' : 'text-destructive'
+                }`}>
+                  {gpaTrend > 0 ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+                  <span>{Math.abs(gpaTrend).toFixed(2)} from last term</span>
+                </div>
+              )}
+            </div>
+
+            <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
+              <div className="flex items-center gap-2 mb-2">
+                <Target className="w-4 h-4 text-primary" />
+                <span className="text-sm text-muted-foreground">Credits Completed</span>
+              </div>
+              <p className="text-3xl font-heading font-bold text-foreground">{creditsCompleted}</p>
+              <p className="text-xs text-muted-foreground mt-2">of 120 required</p>
+            </div>
+
+            <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
+              <div className="flex items-center gap-2 mb-2">
+                <TrendingUp className="w-4 h-4 text-primary" />
+                <span className="text-sm text-muted-foreground">Degree Progress</span>
+              </div>
+              <p className="text-3xl font-heading font-bold text-foreground">{degreeProgress.toFixed(0)}%</p>
+              <div className="w-full bg-muted rounded-full h-2 mt-3">
+                <div 
+                  className="bg-primary rounded-full h-2 transition-all"
+                  style={{ width: `${Math.min(degreeProgress, 100)}%` }}
+                />
+              </div>
+            </div>
+
+            <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
+              <div className="flex items-center gap-2 mb-2">
+                <AlertCircle className="w-4 h-4 text-primary" />
+                <span className="text-sm text-muted-foreground">Risk Status</span>
+              </div>
+              <p className={`text-3xl font-heading font-bold ${
+                riskTier === 'Low' ? 'text-green-600' :
+                riskTier === 'Medium' ? 'text-yellow-600' : 'text-destructive'
+              }`}>
+                {riskTier || 'N/A'}
+              </p>
+              <p className="text-xs text-muted-foreground mt-2">Attendance: {averageAttendance.toFixed(1)}%</p>
+            </div>
+          </div>
+
           {/* Semester Performance Chart */}
           <div className="bg-card rounded-lg border border-border p-6 shadow-sm mb-8">
-            <h3 className="text-lg font-heading font-semibold text-foreground mb-6">Semester Performance</h3>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={semesterData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                <XAxis 
-                  dataKey="semester" 
-                  stroke="hsl(var(--muted-foreground))"
-                  fontSize={12}
-                />
-                <YAxis 
-                  domain={[0, 4.0]}
-                  stroke="hsl(var(--muted-foreground))"
-                  fontSize={12}
-                />
-                <Tooltip 
-                  contentStyle={{
-                    backgroundColor: "hsl(var(--card))",
-                    border: "1px solid hsl(var(--border))",
-                    borderRadius: "8px"
-                  }}
-                />
-                <Bar 
-                  dataKey="gpa" 
-                  fill="hsl(var(--primary))" 
-                  radius={[8, 8, 0, 0]}
-                />
-              </BarChart>
-            </ResponsiveContainer>
+            <h3 className="text-lg font-heading font-semibold text-foreground mb-6">Term GPA Trend</h3>
+            {termGpas.length > 0 ? (
+              <ResponsiveContainer width="100%" height={300}>
+                <AreaChart data={termGpas}>
+                  <defs>
+                    <linearGradient id="colorGpaProgress" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                  <XAxis 
+                    dataKey="term" 
+                    stroke="hsl(var(--muted-foreground))"
+                    fontSize={12}
+                  />
+                  <YAxis 
+                    domain={[0, 4.0]}
+                    stroke="hsl(var(--muted-foreground))"
+                    fontSize={12}
+                  />
+                  <Tooltip 
+                    contentStyle={{
+                      backgroundColor: "hsl(var(--card))",
+                      border: "1px solid hsl(var(--border))",
+                      borderRadius: "8px"
+                    }}
+                  />
+                  <Area 
+                    type="monotone" 
+                    dataKey="gpa" 
+                    stroke="hsl(var(--primary))" 
+                    strokeWidth={2}
+                    fill="url(#colorGpaProgress)"
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="flex items-center justify-center h-64 text-muted-foreground">
+                <p className="text-sm">No GPA data available</p>
+              </div>
+            )}
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-            {/* Achievements */}
-            <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
-              <div className="flex items-center gap-2 mb-6">
-                <Award className="w-5 h-5 text-primary" />
-                <h3 className="text-lg font-heading font-semibold text-foreground">Achievements</h3>
-              </div>
-              <div className="space-y-4">
-                {achievements.map((achievement, index) => (
-                  <div key={index} className="flex items-start gap-3 p-4 bg-background rounded-lg border border-border">
-                    <div className="p-2 rounded-full bg-primary/10">
-                      <Award className="w-4 h-4 text-primary" />
-                    </div>
-                    <div>
-                      <h4 className="font-heading font-semibold text-foreground mb-1">{achievement.title}</h4>
-                      <p className="text-xs text-muted-foreground mb-1">{achievement.semester}</p>
-                      <p className="text-sm text-muted-foreground">{achievement.description}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Academic Goals */}
-            <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
-              <div className="flex items-center gap-2 mb-6">
-                <Target className="w-5 h-5 text-primary" />
-                <h3 className="text-lg font-heading font-semibold text-foreground">Academic Goals</h3>
-              </div>
-              <div className="space-y-4">
-                {goals.map((goal, index) => (
-                  <div key={index} className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-foreground">{goal.title}</span>
-                      <span className="text-xs font-semibold text-primary">{goal.status}</span>
-                    </div>
-                    <div className="w-full bg-muted rounded-full h-2.5">
-                      <div 
-                        className="bg-primary rounded-full h-2.5 transition-all"
-                        style={{ width: `${goal.progress}%` }}
-                      />
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-muted-foreground">{goal.progress}% Complete</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Progress Summary */}
+          {/* Performance Insights */}
           <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
-            <h3 className="text-lg font-heading font-semibold text-foreground mb-4">Overall Progress Summary</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="p-4 bg-background rounded-lg border border-border">
-                <div className="flex items-center gap-2 mb-2">
-                  <TrendingUp className="w-4 h-4 text-green-600" />
-                  <span className="text-sm text-muted-foreground">Total Credits Earned</span>
+            <h3 className="text-lg font-heading font-semibold text-foreground mb-4">Performance Insights</h3>
+            <div className="space-y-4">
+              {cumulativeGpa >= 3.5 && (
+                <div className="flex items-start gap-3 p-4 bg-green-500/10 rounded-lg border border-green-500/20">
+                  <TrendingUp className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <p className="text-sm font-medium text-green-600">Excellent Academic Performance</p>
+                    <p className="text-xs text-muted-foreground mt-1">Your GPA is above 3.5 - keep up the great work!</p>
+                  </div>
                 </div>
-                <p className="text-2xl font-heading font-bold text-foreground">52</p>
-              </div>
-              <div className="p-4 bg-background rounded-lg border border-border">
-                <div className="flex items-center gap-2 mb-2">
-                  <TrendingUp className="w-4 h-4 text-primary" />
-                  <span className="text-sm text-muted-foreground">Current GPA</span>
+              )}
+              
+              {cumulativeGpa < 3.0 && cumulativeGpa >= 2.5 && (
+                <div className="flex items-start gap-3 p-4 bg-yellow-500/10 rounded-lg border border-yellow-500/20">
+                  <AlertCircle className="w-5 h-5 text-yellow-600 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <p className="text-sm font-medium text-yellow-600">Room for Improvement</p>
+                    <p className="text-xs text-muted-foreground mt-1">Consider utilizing tutoring services and meeting with your advisor.</p>
+                  </div>
                 </div>
-                <p className="text-2xl font-heading font-bold text-foreground">3.90</p>
-              </div>
-              <div className="p-4 bg-background rounded-lg border border-border">
-                <div className="flex items-center gap-2 mb-2">
-                  <Target className="w-4 h-4 text-primary" />
-                  <span className="text-sm text-muted-foreground">Degree Progress</span>
+              )}
+
+              {cumulativeGpa < 2.5 && (
+                <div className="flex items-start gap-3 p-4 bg-destructive/10 rounded-lg border border-destructive/20">
+                  <AlertCircle className="w-5 h-5 text-destructive mt-0.5 flex-shrink-0" />
+                  <div>
+                    <p className="text-sm font-medium text-destructive">Academic Support Needed</p>
+                    <p className="text-xs text-muted-foreground mt-1">Please schedule a meeting with your advisor to discuss support resources.</p>
+                  </div>
                 </div>
-                <p className="text-2xl font-heading font-bold text-foreground">43%</p>
-              </div>
+              )}
+
+              {gpaTrend > 0.1 && (
+                <div className="flex items-start gap-3 p-4 bg-primary/10 rounded-lg border border-primary/20">
+                  <TrendingUp className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+                  <div>
+                    <p className="text-sm font-medium text-primary">Positive Trend</p>
+                    <p className="text-xs text-muted-foreground mt-1">Your GPA has improved by {gpaTrend.toFixed(2)} points since last term!</p>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
