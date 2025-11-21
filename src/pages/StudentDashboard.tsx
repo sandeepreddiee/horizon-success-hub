@@ -42,6 +42,41 @@ const StudentDashboard = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      const isLovablePreview = window.location.hostname.endsWith("lovableproject.com");
+
+      // Use mock data in preview environment
+      if (isLovablePreview) {
+        const mockData: DashboardData = {
+          name: "Emma Johnson",
+          major: "Computer Science",
+          cumulativeGpa: 3.45,
+          currentTermGpa: 3.2,
+          attendancePct: 88,
+          engagementScore: 75,
+          riskTier: "Medium",
+          courses: [
+            { courseName: "Data Structures", credits: 4, grade: "B+" },
+            { courseName: "Web Development", credits: 3, grade: "A-" },
+            { courseName: "Database Systems", credits: 3, grade: "B" },
+            { courseName: "Software Engineering", credits: 4, grade: "A" },
+          ],
+          gpaTrend: [
+            { term: "Fall 2023", gpa: 3.2 },
+            { term: "Spring 2024", gpa: 3.4 },
+            { term: "Fall 2024", gpa: 3.5 },
+          ],
+          recommendations: [
+            "Attend the Math Tutoring Center on Tuesdays and Thursdays",
+            "Meet with your academic advisor to discuss course load",
+            "Join a study group for Data Structures course",
+            "Consider attending office hours for additional support",
+          ]
+        };
+        setData(mockData);
+        setIsLoading(false);
+        return;
+      }
+
       if (!studentId) return;
       
       try {
