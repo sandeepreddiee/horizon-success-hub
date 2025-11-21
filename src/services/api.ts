@@ -90,10 +90,10 @@ export const advisorAPI = {
     await new Promise(resolve => setTimeout(resolve, 500));
     return {
       data: {
-        totalStudents: 124,
-        highRiskStudents: 18,
-        averageTermGpa: 3.15,
-        averageAttendance: 86,
+        totalStudents: 5000,
+        highRiskStudents: 892,
+        averageTermGpa: 3.18,
+        averageAttendance: 84.5,
         studentRows: [
           { studentId: 1, name: "Aarav Patel", major: "Computer Science", riskTier: "High" as "High", riskScore: 88, termGpa: 2.80, attendancePct: 75 },
           { studentId: 2, name: "Emily Nguyen", major: "Biology", riskTier: "Low" as "Low", riskScore: 22, termGpa: 3.90, attendancePct: 98 },
@@ -103,6 +103,8 @@ export const advisorAPI = {
           { studentId: 6, name: "James Wilson", major: "Psychology", riskTier: "Medium" as "Medium", riskScore: 42, termGpa: 3.20, attendancePct: 88 },
           { studentId: 7, name: "Fatima Hassan", major: "Computer Science", riskTier: "Low" as "Low", riskScore: 18, termGpa: 3.85, attendancePct: 96 },
           { studentId: 8, name: "Lucas Brown", major: "Engineering", riskTier: "High" as "High", riskScore: 85, termGpa: 2.20, attendancePct: 72 },
+          { studentId: 9, name: "Isabella Garcia", major: "Mathematics", riskTier: "Medium" as "Medium", riskScore: 48, termGpa: 3.25, attendancePct: 82 },
+          { studentId: 10, name: "Mohammed Ali", major: "Physics", riskTier: "Low" as "Low", riskScore: 19, termGpa: 3.75, attendancePct: 94 },
         ]
       }
     };
