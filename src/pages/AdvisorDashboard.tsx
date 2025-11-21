@@ -6,7 +6,7 @@ import AdvisorSidebar from "@/components/AdvisorSidebar";
 import { advisorAPI } from "@/services/api";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/AuthContext";
-import { LogOut, Users } from "lucide-react";
+import { LogOut, Users, AlertTriangle, AlertCircle, CheckCircle } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface StudentRow {
@@ -22,6 +22,8 @@ interface StudentRow {
 interface DashboardData {
   totalStudents: number;
   highRiskStudents: number;
+  mediumRiskStudents: number;
+  lowRiskStudents: number;
   averageTermGpa: number;
   averageAttendance: number;
   studentRows: StudentRow[];
@@ -115,12 +117,60 @@ const AdvisorDashboard = () => {
         </header>
 
         <div className="p-8">
-          {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <StatCard title="Total Students Assigned" value={data.totalStudents.toString()} />
-            <StatCard title="High-Risk Students" value={data.highRiskStudents.toString()} trend="danger" />
+          {/* Main Stats Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+            <StatCard title="Total Students Assigned" value={data.totalStudents.toString()} icon={Users} />
             <StatCard title="Average Term GPA" value={data.averageTermGpa.toFixed(2)} />
             <StatCard title="Average Attendance %" value={`${data.averageAttendance}%`} />
+            <StatCard title="Completion Rate" value="92%" />
+          </div>
+
+          {/* Risk Breakdown Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div className="bg-gradient-to-br from-destructive/10 to-destructive/5 rounded-lg border border-destructive/20 p-6 shadow-sm hover:shadow-md transition-shadow">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-destructive/20 flex items-center justify-center">
+                    <AlertTriangle className="w-5 h-5 text-destructive" />
+                  </div>
+                  <span className="text-sm font-medium text-muted-foreground">High Risk</span>
+                </div>
+              </div>
+              <p className="text-3xl font-heading font-bold text-destructive mb-1">{data.highRiskStudents}</p>
+              <p className="text-xs text-muted-foreground">
+                {((data.highRiskStudents / data.totalStudents) * 100).toFixed(1)}% of total students
+              </p>
+            </div>
+
+            <div className="bg-gradient-to-br from-yellow-500/10 to-yellow-500/5 rounded-lg border border-yellow-500/20 p-6 shadow-sm hover:shadow-md transition-shadow">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-yellow-500/20 flex items-center justify-center">
+                    <AlertCircle className="w-5 h-5 text-yellow-600" />
+                  </div>
+                  <span className="text-sm font-medium text-muted-foreground">Medium Risk</span>
+                </div>
+              </div>
+              <p className="text-3xl font-heading font-bold text-yellow-600 mb-1">{data.mediumRiskStudents}</p>
+              <p className="text-xs text-muted-foreground">
+                {((data.mediumRiskStudents / data.totalStudents) * 100).toFixed(1)}% of total students
+              </p>
+            </div>
+
+            <div className="bg-gradient-to-br from-green-500/10 to-green-500/5 rounded-lg border border-green-500/20 p-6 shadow-sm hover:shadow-md transition-shadow">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-green-500/20 flex items-center justify-center">
+                    <CheckCircle className="w-5 h-5 text-green-600" />
+                  </div>
+                  <span className="text-sm font-medium text-muted-foreground">Low Risk</span>
+                </div>
+              </div>
+              <p className="text-3xl font-heading font-bold text-green-600 mb-1">{data.lowRiskStudents}</p>
+              <p className="text-xs text-muted-foreground">
+                {((data.lowRiskStudents / data.totalStudents) * 100).toFixed(1)}% of total students
+              </p>
+            </div>
           </div>
 
           {/* Filters */}
