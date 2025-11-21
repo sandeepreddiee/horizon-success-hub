@@ -113,6 +113,8 @@ export const advisorAPI = {
     }));
     
     const highRiskStudents = studentsWithRisk.filter(s => s.riskTier === "High").length;
+    const mediumRiskStudents = studentsWithRisk.filter(s => s.riskTier === "Medium").length;
+    const lowRiskStudents = studentsWithRisk.filter(s => s.riskTier === "Low").length;
     const averageAttendance = studentsWithRisk.reduce((sum, s) => sum + s.attendancePct, 0) / totalStudents;
     
     // Get a representative sample: all high-risk students + some medium and low
@@ -134,6 +136,8 @@ export const advisorAPI = {
       data: {
         totalStudents,
         highRiskStudents,
+        mediumRiskStudents,
+        lowRiskStudents,
         averageTermGpa: Math.round(averageTermGpa * 100) / 100,
         averageAttendance: Math.round(averageAttendance * 10) / 10,
         studentRows
