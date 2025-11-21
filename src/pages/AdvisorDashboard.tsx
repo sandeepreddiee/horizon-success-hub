@@ -34,28 +34,6 @@ const AdvisorDashboard = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const isLovablePreview = window.location.hostname.endsWith("lovableproject.com");
-
-      // Use mock data in preview environment
-      if (isLovablePreview) {
-        const mockData: DashboardData = {
-          totalStudents: 156,
-          highRiskStudents: 23,
-          averageTermGpa: 3.24,
-          averageAttendance: 87.5,
-          studentRows: [
-            { studentId: 1, name: "Emma Johnson", major: "Computer Science", riskTier: "High", riskScore: 75, termGpa: 2.1, attendancePct: 65 },
-            { studentId: 2, name: "Michael Chen", major: "Business Administration", riskTier: "Medium", riskScore: 45, termGpa: 2.8, attendancePct: 78 },
-            { studentId: 3, name: "Sarah Williams", major: "Engineering", riskTier: "Low", riskScore: 15, termGpa: 3.6, attendancePct: 95 },
-            { studentId: 4, name: "David Martinez", major: "Psychology", riskTier: "High", riskScore: 80, termGpa: 2.0, attendancePct: 60 },
-            { studentId: 5, name: "Jessica Lee", major: "Biology", riskTier: "Low", riskScore: 20, termGpa: 3.8, attendancePct: 92 },
-          ]
-        };
-        setData(mockData);
-        setIsLoading(false);
-        return;
-      }
-
       try {
         const response = await advisorAPI.getDashboard();
         setData(response.data);

@@ -18,33 +18,8 @@ const Login = () => {
     console.log("Login attempt started with:", { email, asRole });
     setIsLoading(true);
 
-    const isLovablePreview = window.location.hostname.endsWith("lovableproject.com");
-
-    // In Lovable preview, simulate login so you can navigate without a backend
-    if (isLovablePreview) {
-      try {
-        const mockStudentId = asRole === "STUDENT" ? 1 : null;
-
-        login("preview-token", asRole, mockStudentId as number | null);
-
-        toast({
-          title: "Preview login",
-          description: `Simulated ${asRole.toLowerCase()} login in preview environment.`,
-        });
-
-        if (asRole === "ADVISOR") {
-          window.location.href = "/advisor/dashboard";
-        } else {
-          window.location.href = `/student/${mockStudentId}/dashboard`;
-        }
-      } finally {
-        setIsLoading(false);
-      }
-      return;
-    }
-
     try {
-      console.log("Making API call to backend...");
+      console.log("Making API call...");
       const response = await authAPI.login(email, password);
       console.log("API response received:", response);
       const { token, role, studentId } = response.data;
@@ -64,8 +39,6 @@ const Login = () => {
       }
     } catch (error: any) {
       console.error("Login error details:", error);
-      console.error("Error response:", error.response);
-      console.error("Error message:", error.message);
       toast({
         title: "Login failed",
         description: error.response?.data?.message || error.message || "Invalid credentials",
