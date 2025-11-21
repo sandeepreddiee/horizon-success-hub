@@ -12,6 +12,7 @@ import AdvisorAlerts from "./pages/AdvisorAlerts";
 import AdvisorInterventions from "./pages/AdvisorInterventions";
 import AdvisorReports from "./pages/AdvisorReports";
 import AdvisorResources from "./pages/AdvisorResources";
+import AdvisorStudentDetail from "./pages/AdvisorStudentDetail";
 import StudentDashboard from "./pages/StudentDashboard";
 import StudentCourses from "./pages/StudentCourses";
 import StudentProgress from "./pages/StudentProgress";
@@ -80,6 +81,14 @@ const App = () => (
               element={
                 <ProtectedRoute requiredRole="ADVISOR">
                   <AdvisorResources />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/advisor/student/:studentId"
+              element={
+                <ProtectedRoute requiredRole="ADVISOR">
+                  <AdvisorStudentDetail />
                 </ProtectedRoute>
               }
             />
