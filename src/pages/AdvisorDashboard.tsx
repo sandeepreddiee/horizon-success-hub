@@ -6,8 +6,9 @@ import AdvisorSidebar from "@/components/AdvisorSidebar";
 import { advisorAPI } from "@/services/api";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/AuthContext";
-import { LogOut, Users, AlertTriangle, AlertCircle, CheckCircle } from "lucide-react";
+import { LogOut, Users, AlertTriangle, AlertCircle, CheckCircle, ChevronLeft, ChevronRight } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 
 interface StudentRow {
   studentId: number;
@@ -27,6 +28,12 @@ interface DashboardData {
   averageTermGpa: number;
   averageAttendance: number;
   studentRows: StudentRow[];
+  pagination: {
+    currentPage: number;
+    pageSize: number;
+    totalPages: number;
+    totalFiltered: number;
+  };
 }
 
 const AdvisorDashboard = () => {
@@ -34,13 +41,16 @@ const AdvisorDashboard = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [riskFilter, setRiskFilter] = useState<string>("all");
   const [majorFilter, setMajorFilter] = useState<string>("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(50);
   const { toast } = useToast();
   const { logout } = useAuth();
 
   useEffect(() => {
     const fetchData = async () => {
+      setIsLoading(true);
       try {
-        const response = await advisorAPI.getDashboard();
+        const response = await advisorAPI.getDashboard(currentPage, pageSize, riskFilter, majorFilter);
         setData(response.data);
       } catch (error: any) {
         console.error("Dashboard error:", error);
@@ -55,25 +65,19 @@ const AdvisorDashboard = () => {
     };
 
     fetchData();
-  }, [toast]);
+  }, [currentPage, pageSize, riskFilter, majorFilter, toast]);
 
-  // Get unique majors for filter
+  // Get unique majors for filter (from API)
   const uniqueMajors = useMemo(() => {
     if (!data) return [];
     const majors = [...new Set(data.studentRows.map(s => s.major))];
     return majors.sort();
   }, [data]);
-
-  // Filter students based on selected filters
-  const filteredStudents = useMemo(() => {
-    if (!data) return [];
-    
-    return data.studentRows.filter(student => {
-      const matchesRisk = riskFilter === "all" || student.riskTier.toLowerCase() === riskFilter;
-      const matchesMajor = majorFilter === "all" || student.major === majorFilter;
-      return matchesRisk && matchesMajor;
-    });
-  }, [data, riskFilter, majorFilter]);
+  
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [riskFilter, majorFilter]);
 
   if (isLoading) {
     return (
@@ -174,41 +178,47 @@ const AdvisorDashboard = () => {
           </div>
 
           {/* Filters */}
-          <div className="flex gap-4 mb-6">
-            <Select value={majorFilter} onValueChange={setMajorFilter}>
-              <SelectTrigger className="w-56">
-                <SelectValue placeholder="Filter by Department" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Departments</SelectItem>
-                {uniqueMajors.map(major => (
-                  <SelectItem key={major} value={major}>{major}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex gap-4">
+              <Select value={majorFilter} onValueChange={setMajorFilter}>
+                <SelectTrigger className="w-56">
+                  <SelectValue placeholder="Filter by Department" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Departments</SelectItem>
+                  {uniqueMajors.map(major => (
+                    <SelectItem key={major} value={major}>{major}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
 
-            <Select value={riskFilter} onValueChange={setRiskFilter}>
-              <SelectTrigger className="w-56">
-                <SelectValue placeholder="Filter by Risk Tier" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Risk Tiers</SelectItem>
-                <SelectItem value="high">High Risk</SelectItem>
-                <SelectItem value="medium">Medium Risk</SelectItem>
-                <SelectItem value="low">Low Risk</SelectItem>
-              </SelectContent>
-            </Select>
+              <Select value={riskFilter} onValueChange={setRiskFilter}>
+                <SelectTrigger className="w-56">
+                  <SelectValue placeholder="Filter by Risk Tier" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Risk Tiers</SelectItem>
+                  <SelectItem value="high">High Risk</SelectItem>
+                  <SelectItem value="medium">Medium Risk</SelectItem>
+                  <SelectItem value="low">Low Risk</SelectItem>
+                </SelectContent>
+              </Select>
 
-            <Select defaultValue="all">
-              <SelectTrigger className="w-56">
-                <SelectValue placeholder="Filter by Term" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Terms</SelectItem>
-                <SelectItem value="fall2024">Fall 2024</SelectItem>
-                <SelectItem value="spring2024">Spring 2024</SelectItem>
-              </SelectContent>
-            </Select>
+              <Select defaultValue="all">
+                <SelectTrigger className="w-56">
+                  <SelectValue placeholder="Filter by Term" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Terms</SelectItem>
+                  <SelectItem value="fall2024">Fall 2024</SelectItem>
+                  <SelectItem value="spring2024">Spring 2024</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div className="text-sm text-muted-foreground">
+              Showing {data.studentRows.length > 0 ? ((currentPage - 1) * pageSize) + 1 : 0} - {Math.min(currentPage * pageSize, data.pagination.totalFiltered)} of {data.pagination.totalFiltered} students
+            </div>
           </div>
 
           {/* Students Table */}
@@ -226,14 +236,14 @@ const AdvisorDashboard = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
-                  {filteredStudents.length === 0 ? (
+                  {data.studentRows.length === 0 ? (
                     <tr>
                       <td colSpan={6} className="px-6 py-8 text-center text-muted-foreground">
                         No students found matching the selected filters.
                       </td>
                     </tr>
                   ) : (
-                    filteredStudents.map((student) => (
+                    data.studentRows.map((student) => (
                       <tr key={student.studentId} className="hover:bg-muted/30 transition-colors">
                         <td className="px-6 py-4 text-sm text-foreground font-medium">{student.name}</td>
                         <td className="px-6 py-4 text-sm text-muted-foreground">{student.major}</td>
@@ -248,6 +258,67 @@ const AdvisorDashboard = () => {
                   )}
                 </tbody>
               </table>
+            </div>
+            
+            {/* Pagination Controls */}
+            <div className="px-6 py-4 border-t border-border flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-muted-foreground">Rows per page:</span>
+                <Select value={pageSize.toString()} onValueChange={(value) => {
+                  setPageSize(Number(value));
+                  setCurrentPage(1);
+                }}>
+                  <SelectTrigger className="w-20">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="25">25</SelectItem>
+                    <SelectItem value="50">50</SelectItem>
+                    <SelectItem value="100">100</SelectItem>
+                    <SelectItem value="200">200</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-muted-foreground">
+                  Page {data.pagination.currentPage} of {data.pagination.totalPages}
+                </span>
+                <div className="flex gap-1">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentPage(1)}
+                    disabled={currentPage === 1}
+                  >
+                    First
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                    disabled={currentPage === 1}
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => setCurrentPage(p => Math.min(data.pagination.totalPages, p + 1))}
+                    disabled={currentPage === data.pagination.totalPages}
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentPage(data.pagination.totalPages)}
+                    disabled={currentPage === data.pagination.totalPages}
+                  >
+                    Last
+                  </Button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
