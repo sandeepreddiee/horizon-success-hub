@@ -1,106 +1,73 @@
-# Horizon Retention & Success Hub
+# Welcome to your Lovable project
 
-A comprehensive student success and early intervention system for Horizon University. This platform empowers academic advisors and students through predictive analytics and coordinated support services.
+## Project info
 
-## Features
+**URL**: https://lovable.dev/projects/568281cb-a463-4828-886e-1ee152a3574f
 
-### For Advisors
-- **Dashboard Analytics**: Real-time overview of student population with risk metrics
-- **Student Management**: Search, filter, and monitor individual student progress
-- **Risk Assessment**: ML-powered risk predictions based on multiple factors
-- **Intervention Tracking**: Document and track advising notes and interventions
-- **Reporting Tools**: Generate comprehensive reports on student outcomes
+## How can I edit this code?
 
-### For Students
-- **Personal Dashboard**: View academic progress, GPA trends, and course performance
-- **Course Tracking**: Monitor grades, attendance, and LMS engagement
-- **Progress Visualization**: Track degree completion and academic milestones
-- **Support Resources**: Access tutoring, career services, and counseling
-- **Advisor Contact**: Connect with academic advising services
+There are several ways of editing your application.
 
-## Technology Stack
+**Use Lovable**
 
-This project is built with modern web technologies:
+Simply visit the [Lovable Project](https://lovable.dev/projects/568281cb-a463-4828-886e-1ee152a3574f) and start prompting.
 
-- **Frontend Framework**: React 18 with TypeScript
-- **Build Tool**: Vite for fast development and optimized production builds
-- **UI Components**: shadcn-ui component library
-- **Styling**: Tailwind CSS for responsive design
-- **Data Visualization**: Recharts for interactive charts and graphs
-- **Routing**: React Router for navigation
-- **State Management**: React Context API
+Changes made via Lovable will be committed automatically to this repo.
 
-## Getting Started
+**Use your preferred IDE**
 
-### Prerequisites
+If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
 
-- Node.js (v18 or higher)
-- npm or yarn package manager
+The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
 
-### Installation
+Follow these steps:
 
-1. Clone the repository:
-```bash
-git clone <repository-url>
-cd horizon-retention-hub
-```
+```sh
+# Step 1: Clone the repository using the project's Git URL.
+git clone <YOUR_GIT_URL>
 
-2. Install dependencies:
-```bash
-npm install
-```
+# Step 2: Navigate to the project directory.
+cd <YOUR_PROJECT_NAME>
 
-3. Start the development server:
-```bash
+# Step 3: Install the necessary dependencies.
+npm i
+
+# Step 4: Start the development server with auto-reloading and an instant preview.
 npm run dev
 ```
 
-The application will be available at `http://localhost:5173`
+**Edit a file directly in GitHub**
 
-### Building for Production
+- Navigate to the desired file(s).
+- Click the "Edit" button (pencil icon) at the top right of the file view.
+- Make your changes and commit the changes.
 
-Create an optimized production build:
-```bash
-npm run build
-```
+**Use GitHub Codespaces**
 
-Preview the production build locally:
-```bash
-npm run preview
-```
+- Navigate to the main page of your repository.
+- Click on the "Code" button (green button) near the top right.
+- Select the "Codespaces" tab.
+- Click on "New codespace" to launch a new Codespace environment.
+- Edit files directly within the Codespace and commit and push your changes once you're done.
 
-## Project Structure
+## What technologies are used for this project?
 
-```
-src/
-├── components/       # Reusable UI components
-├── pages/           # Application pages/routes
-├── services/        # API and data services
-├── context/         # React context providers
-├── hooks/           # Custom React hooks
-├── data/            # CSV data files
-└── lib/             # Utility functions
-```
+This project is built with:
 
-## Data Sources
+- Vite
+- TypeScript
+- React
+- shadcn-ui
+- Tailwind CSS
 
-The system integrates data from multiple sources:
-- Student demographics and enrollment
-- Course grades and academic performance
-- Attendance records
-- LMS engagement metrics
-- Financial aid information
-- ML-generated risk predictions
+## How can I deploy this project?
 
-## Development
+Simply open [Lovable](https://lovable.dev/projects/568281cb-a463-4828-886e-1ee152a3574f) and click on Share -> Publish.
 
-### Available Scripts
+## Can I connect a custom domain to my Lovable project?
 
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm run lint` - Run ESLint
+Yes, you can!
 
-## License
+To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
-© 2024 Horizon University. All rights reserved.
+Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)

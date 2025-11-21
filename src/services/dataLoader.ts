@@ -102,8 +102,7 @@ export interface TermGPAData {
   term_id: number;
 }
 
-// Caching with timestamp for development hot-reload support
-let cacheTimestamp = Date.now();
+// Caching
 let cachedStudents: StudentData[] | null = null;
 let cachedAdvisingNotes: AdvisingNoteData[] | null = null;
 let cachedAttendance: AttendanceData[] | null = null;
@@ -114,23 +113,6 @@ let cachedFinancialAid: FinancialAidData[] | null = null;
 let cachedLMSEvents: LMSEventData[] | null = null;
 let cachedRiskScores: RiskScoreData[] | null = null;
 let cachedTermGPAs: TermGPAData[] | null = null;
-
-// Clear cache if CSV content changes (development mode)
-if (import.meta.hot) {
-  import.meta.hot.accept(() => {
-    cachedStudents = null;
-    cachedAdvisingNotes = null;
-    cachedAttendance = null;
-    cachedCourses = null;
-    cachedEnrollments = null;
-    cachedEnrollmentGrades = null;
-    cachedFinancialAid = null;
-    cachedLMSEvents = null;
-    cachedRiskScores = null;
-    cachedTermGPAs = null;
-    cacheTimestamp = Date.now();
-  });
-}
 
 // Generic CSV loader
 const loadCSV = <T>(csvData: string, cache: T[] | null): Promise<T[]> => {
