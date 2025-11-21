@@ -62,7 +62,10 @@ const StudentDashboard = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!studentId) return;
+      if (!studentId) {
+        setIsLoading(false);
+        return;
+      }
       
       try {
         const response = await studentAPI.getDashboard(studentId);
