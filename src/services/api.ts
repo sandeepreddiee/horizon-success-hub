@@ -164,6 +164,51 @@ export const advisorAPI = {
       }
     };
   },
+  getStudents: async (page: number = 1, pageSize: number = 30, searchQuery: string = "") => {
+    await new Promise(resolve => setTimeout(resolve, 300));
+    
+    const students = await loadStudents();
+    
+    const getAttendance = (studentId: number) => {
+      const seed = studentId * 12345;
+      return (seed % 30) + 70;
+    };
+    
+    const studentsWithRisk = students.map(s => ({
+      studentId: s.student_id,
+      name: s.name,
+      major: s.major,
+      riskTier: calculateRiskTier(s.cumulative_gpa, s.credits_completed),
+      riskScore: calculateRiskScore(s.cumulative_gpa, s.credits_completed),
+      termGpa: s.cumulative_gpa,
+      attendancePct: getAttendance(s.student_id)
+    }));
+    
+    let filtered = studentsWithRisk;
+    if (searchQuery) {
+      filtered = filtered.filter(s => 
+        s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        s.major.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+    
+    const totalFiltered = filtered.length;
+    const totalPages = Math.ceil(totalFiltered / pageSize);
+    const startIndex = (page - 1) * pageSize;
+    const paginatedStudents = filtered.slice(startIndex, startIndex + pageSize);
+    
+    return {
+      data: {
+        students: paginatedStudents,
+        pagination: {
+          currentPage: page,
+          pageSize,
+          totalPages,
+          totalFiltered
+        }
+      }
+    };
+  },
   getNotes: async (studentId: number) => {
     await new Promise(resolve => setTimeout(resolve, 500));
     return {

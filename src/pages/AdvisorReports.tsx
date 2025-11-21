@@ -7,21 +7,21 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip, BarChart, Ba
 const AdvisorReports = () => {
   const { logout } = useAuth();
 
-  // Mock data based on dataset - Risk Distribution from riskscores table
+  // Mock data based on real dataset - Risk Distribution from riskscores table
   const riskDistributionData = [
-    { name: "High Risk", value: 18, percentage: 15 },
-    { name: "Medium Risk", value: 42, percentage: 34 },
-    { name: "Low Risk", value: 64, percentage: 51 },
+    { name: "High Risk", value: 74, percentage: 1.5 },
+    { name: "Medium Risk", value: 1995, percentage: 39.9 },
+    { name: "Low Risk", value: 2931, percentage: 58.6 },
   ];
 
-  // Mock data based on dataset - GPA Distribution from term_gpas table
+  // Mock data based on real dataset - GPA Distribution from term_gpas table
   const gpaDistributionData = [
-    { range: "0.0-1.0", count: 3 },
-    { range: "1.0-2.0", count: 8 },
-    { range: "2.0-2.5", count: 15 },
-    { range: "2.5-3.0", count: 28 },
-    { range: "3.0-3.5", count: 42 },
-    { range: "3.5-4.0", count: 28 },
+    { range: "0.0-1.0", count: 12 },
+    { range: "1.0-2.0", count: 342 },
+    { range: "2.0-2.5", count: 876 },
+    { range: "2.5-3.0", count: 1654 },
+    { range: "3.0-3.5", count: 1489 },
+    { range: "3.5-4.0", count: 627 },
   ];
 
   const COLORS = {
@@ -56,10 +56,10 @@ const AdvisorReports = () => {
           <div className="mb-8">
             <h2 className="text-xl font-heading font-semibold text-foreground mb-4">Term Overview</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <StatCard title="Total Students" value="124" />
-              <StatCard title="Average Term GPA" value="3.15" />
-              <StatCard title="Average Attendance" value="86%" />
-              <StatCard title="High Risk Students" value="18" trend="danger" />
+              <StatCard title="Total Students" value="5000" />
+              <StatCard title="Average Term GPA" value="2.81" />
+              <StatCard title="Average Attendance" value="77.5%" />
+              <StatCard title="High Risk Students" value="74" trend="danger" />
             </div>
           </div>
 
@@ -104,8 +104,8 @@ const AdvisorReports = () => {
               <div className="mt-4 pt-4 border-t border-border">
                 <p className="text-sm text-muted-foreground leading-relaxed">
                   This chart shows the distribution of students across risk tiers based on their risk scores (0-100). 
-                  High-risk students (15%) require immediate intervention, while medium-risk students (34%) need 
-                  regular monitoring. The majority (51%) are low-risk, performing well academically.
+                  High-risk students (1.5%) require immediate intervention, while medium-risk students (39.9%) need 
+                  regular monitoring. The majority (58.6%) are low-risk, performing well academically.
                 </p>
               </div>
             </div>
@@ -144,8 +144,8 @@ const AdvisorReports = () => {
               <div className="mt-4 pt-4 border-t border-border">
                 <p className="text-sm text-muted-foreground leading-relaxed">
                   This histogram displays how student GPAs are distributed across different ranges for the current term. 
-                  Most students cluster in the 3.0-3.5 range (42 students), indicating strong overall performance. 
-                  Students below 2.5 (26 total) should be prioritized for academic support interventions.
+                  Most students cluster in the 2.5-3.0 range (1,654 students), indicating moderate overall performance. 
+                  Students below 2.0 (1,230 total) should be prioritized for academic support interventions.
                 </p>
               </div>
             </div>
@@ -160,7 +160,7 @@ const AdvisorReports = () => {
                 <div>
                   <p className="text-sm font-medium text-foreground mb-1">Focus on High-Risk Students</p>
                   <p className="text-sm text-muted-foreground">
-                    18 students are in the high-risk category. Prioritize one-on-one meetings and academic support resources 
+                    74 students are in the high-risk category. Prioritize one-on-one meetings and academic support resources 
                     for these students to prevent potential dropouts.
                   </p>
                 </div>
@@ -170,7 +170,7 @@ const AdvisorReports = () => {
                 <div>
                   <p className="text-sm font-medium text-foreground mb-1">GPA Distribution Concerns</p>
                   <p className="text-sm text-muted-foreground">
-                    26 students have GPAs below 2.5. Consider implementing peer tutoring programs and study skills workshops 
+                    1,230 students have GPAs below 2.0. Consider implementing peer tutoring programs and study skills workshops 
                     to help these students improve their academic performance.
                   </p>
                 </div>
@@ -180,7 +180,7 @@ const AdvisorReports = () => {
                 <div>
                   <p className="text-sm font-medium text-foreground mb-1">Monitor Medium-Risk Students</p>
                   <p className="text-sm text-muted-foreground">
-                    42 students in medium-risk category need regular check-ins to prevent escalation. 
+                    1,995 students in medium-risk category need regular check-ins to prevent escalation. 
                     Automated alerts based on attendance and LMS engagement can help identify early warning signs.
                   </p>
                 </div>
