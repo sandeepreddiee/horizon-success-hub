@@ -60,7 +60,7 @@ const StudentCourses = () => {
       
       <div className="flex-1">
         <header className="bg-card border-b border-border px-8 py-6 flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-foreground">My Courses</h1>
+          <h1 className="text-2xl font-heading font-semibold text-foreground">My Courses</h1>
           <div className="flex items-center gap-4">
             <button className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
               <Users className="w-5 h-5 text-muted-foreground" />
@@ -85,16 +85,16 @@ const StudentCourses = () => {
             <TabsContent value="current" className="space-y-6">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {mockCourses.map((course) => (
-                  <div key={course.id} className="bg-card rounded-lg border border-border p-6">
+                  <div key={course.id} className="bg-card rounded-lg border border-border p-6 shadow-sm">
                     <div className="flex items-start justify-between mb-4">
                       <div>
-                        <h3 className="text-lg font-semibold text-foreground mb-1">{course.name}</h3>
+                        <h3 className="text-lg font-heading font-semibold text-foreground mb-1">{course.name}</h3>
                         <p className="text-sm text-muted-foreground">{course.code} • {course.credits} Credits</p>
                       </div>
                       <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
-                        course.grade.startsWith('A') ? 'bg-green-500/10 text-green-500' :
+                        course.grade.startsWith('A') ? 'bg-green-500/10 text-green-600' :
                         course.grade.startsWith('B') ? 'bg-primary/10 text-primary' :
-                        'bg-yellow-500/10 text-yellow-500'
+                        'bg-yellow-500/10 text-yellow-600'
                       }`}>
                         {course.grade}
                       </span>
