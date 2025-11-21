@@ -265,95 +265,49 @@ export const studentAPI = {
       throw new Error("Student not found");
     }
     
-    // Calculate attendance (consistent with advisor dashboard)
-    const getAttendance = (id: number) => {
-      const seed = id * 12345;
-      return (seed % 30) + 70;
-    };
-    
-    const attendancePct = getAttendance(student.student_id);
-    
-    // Calculate risk
-    const riskTier = calculateRiskTier(student.cumulative_gpa, student.credits_completed);
-    const riskScore = calculateRiskScore(student.cumulative_gpa, student.credits_completed);
-    
-    // Calculate engagement score (based on credits completed and GPA)
-    // Higher credits and GPA = higher engagement
-    const engagementScore = Math.min(100, Math.round(
-      (student.credits_completed / 120 * 50) + (student.cumulative_gpa / 4.0 * 50)
-    ));
-    
-    // Generate mock courses based on major (since we don't have enrollments CSV yet)
-    const coursesByMajor: { [key: string]: string[] } = {
-      "Computer Science": ["Data Structures", "Algorithms", "Web Development", "Database Systems"],
-      "Biology": ["Cell Biology", "Genetics", "Organic Chemistry", "Microbiology"],
-      "Engineering": ["Thermodynamics", "Mechanics", "Circuit Analysis", "Materials Science"],
-      "Mathematics": ["Calculus III", "Linear Algebra", "Differential Equations", "Statistics"],
-      "Business Analytics": ["Data Analytics", "Business Intelligence", "Financial Analysis", "Marketing Analytics"],
-      "Psychology": ["Cognitive Psychology", "Research Methods", "Developmental Psychology", "Social Psychology"],
-      "Nursing": ["Anatomy", "Pharmacology", "Clinical Practice", "Patient Care"],
-      "default": ["Core Course 1", "Core Course 2", "Elective 1", "Elective 2"]
-    };
-    
-    const majorCourses = coursesByMajor[student.major] || coursesByMajor["default"];
-    const courses = majorCourses.slice(0, 4).map((courseName, idx) => {
-      // Generate grade based on GPA
-      let grade = "B";
-      if (student.cumulative_gpa >= 3.7) grade = ["A", "A-", "A", "A-"][idx];
-      else if (student.cumulative_gpa >= 3.3) grade = ["A-", "B+", "A-", "B+"][idx];
-      else if (student.cumulative_gpa >= 3.0) grade = ["B+", "B", "B+", "B"][idx];
-      else if (student.cumulative_gpa >= 2.7) grade = ["B", "B-", "B", "C+"][idx];
-      else if (student.cumulative_gpa >= 2.3) grade = ["B-", "C+", "C+", "C"][idx];
-      else grade = ["C", "C-", "C", "D+"][idx];
-      
-      return {
-        courseName,
-        credits: [4, 3, 3, 4][idx],
-        grade
-      };
-    });
-    
-    // Generate GPA trend (simulate progression)
-    const currentGpa = student.cumulative_gpa;
-    const gpaTrend = [
-      { term: "Fall 2023", gpa: Math.max(0, currentGpa - 0.4) },
-      { term: "Spring 2024", gpa: Math.max(0, currentGpa - 0.2) },
-      { term: "Summer 2024", gpa: Math.max(0, currentGpa - 0.1) },
-      { term: "Fall 2024", gpa: currentGpa },
-    ].map(t => ({ ...t, gpa: Math.min(4.0, Math.round(t.gpa * 100) / 100) }));
-    
-    // Generate recommendations based on risk and performance
-    const recommendations: string[] = [];
-    
-    if (riskTier === "High") {
-      recommendations.push("Schedule a meeting with your advisor to discuss academic support options");
-      recommendations.push("Visit the Academic Success Center for tutoring services");
-      recommendations.push("Consider reducing course load next semester to focus on core subjects");
-      recommendations.push("Attend weekly study groups to improve understanding of course material");
-    } else if (riskTier === "Medium") {
-      recommendations.push("Meet with your advisor to review your academic progress");
-      recommendations.push("Explore study skills workshops offered by the Student Success Center");
-      recommendations.push("Connect with classmates for study groups");
-      recommendations.push("Review course prerequisites for next semester");
-    } else {
-      recommendations.push("Explore Honors Program opportunities in your major");
-      recommendations.push("Consider taking advanced electives or research courses");
-      recommendations.push("Look into undergraduate research or internship programs");
-      recommendations.push("Meet advisor to plan 400-level courses for next year");
-    }
-    
+    // Use real data from Students.csv
     return {
       data: {
+        // Real student profile data
         name: student.name,
         major: student.major,
         cumulativeGpa: student.cumulative_gpa,
-        currentTermGpa: student.cumulative_gpa, // Using cumulative as current term
-        attendancePct,
-        engagementScore,
-        riskTier,
-        courses,
-        gpaTrend,
-        recommendations
+        creditsCompleted: student.credits_completed,
+        age: student.age,
+        gender: student.gender,
+        residencyStatus: student.residency_status,
+        firstGen: student.first_gen === 1,
+        
+        // Placeholders for data from other CSV files (to be loaded when available)
+        termGpas: [], // Will come from performance data
+        courses: [], // Will come from course enrollments
+        courseGrades: [], // Will come from course grades
+        
+        // LMS engagement data (to be loaded from weekly LMS activity CSV)
+        lmsActivity: {
+          weeklyLogins: [],
+          weeklyTimeSpent: [],
+          weeklyAssignments: []
+        },
+        
+        // Attendance data (to be loaded from attendance CSV)
+        attendanceByCourse: [],
+        
+        // Financial data (to be loaded from financial CSV)
+        financial: {
+          aidAmount: null,
+          hasScholarship: false,
+          householdIncome: null,
+          workHours: null,
+          outstandingBalance: null
+        },
+        
+        // Risk prediction (to be loaded from ML risk CSV)
+        riskScore: null,
+        riskTier: null,
+        
+        // Advising notes (to be loaded from notes CSV)
+        advisingNotes: []
       }
     };
   },
