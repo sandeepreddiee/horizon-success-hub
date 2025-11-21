@@ -7,6 +7,11 @@ import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Login from "./pages/Login";
 import AdvisorDashboard from "./pages/AdvisorDashboard";
+import AdvisorStudents from "./pages/AdvisorStudents";
+import AdvisorAlerts from "./pages/AdvisorAlerts";
+import AdvisorInterventions from "./pages/AdvisorInterventions";
+import AdvisorReports from "./pages/AdvisorReports";
+import AdvisorResources from "./pages/AdvisorResources";
 import StudentDashboard from "./pages/StudentDashboard";
 import AdvisorNotes from "./pages/AdvisorNotes";
 import NotFound from "./pages/NotFound";
@@ -31,6 +36,46 @@ const App = () => (
               element={
                 <ProtectedRoute requiredRole="ADVISOR">
                   <AdvisorDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/advisor/students"
+              element={
+                <ProtectedRoute requiredRole="ADVISOR">
+                  <AdvisorStudents />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/advisor/alerts"
+              element={
+                <ProtectedRoute requiredRole="ADVISOR">
+                  <AdvisorAlerts />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/advisor/interventions"
+              element={
+                <ProtectedRoute requiredRole="ADVISOR">
+                  <AdvisorInterventions />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/advisor/reports"
+              element={
+                <ProtectedRoute requiredRole="ADVISOR">
+                  <AdvisorReports />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/advisor/resources"
+              element={
+                <ProtectedRoute requiredRole="ADVISOR">
+                  <AdvisorResources />
                 </ProtectedRoute>
               }
             />
