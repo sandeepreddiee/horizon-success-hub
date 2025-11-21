@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { LayoutDashboard, Users, AlertTriangle, FileText, BarChart3, BookOpen } from "lucide-react";
 import logoImage from "@/assets/horizon-logo.png";
+import RoleBadge from "@/components/RoleBadge";
 
 const AdvisorSidebar = () => {
   const location = useLocation();
@@ -16,9 +17,13 @@ const AdvisorSidebar = () => {
 
   return (
     <aside className="w-64 bg-card border-r border-border min-h-screen p-6">
-      <div className="flex items-center gap-3 mb-8">
+      <div className="flex items-center gap-3 mb-4">
         <img src={logoImage} alt="Horizon University" className="w-10 h-10" />
         <div className="text-sm font-heading font-semibold text-foreground">Horizon University</div>
+      </div>
+
+      <div className="mb-6 flex justify-center">
+        <RoleBadge role="ADVISOR" />
       </div>
 
       <nav className="space-y-2">
