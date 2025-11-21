@@ -20,7 +20,7 @@ const Login = () => {
 
     try {
       console.log("Making API call...");
-      const response = await authAPI.login(email, password);
+      const response = await authAPI.login(email, password, asRole); // Pass role to API
       console.log("API response received:", response);
       const { token, role, studentId } = response.data;
 
