@@ -87,7 +87,7 @@ export const authAPI = {
 };
 
 export const advisorAPI = {
-  getDashboard: async () => {
+  getDashboard: async (page: number = 1, pageSize: number = 50, riskFilter: string = "all", majorFilter: string = "all") => {
     await new Promise(resolve => setTimeout(resolve, 300));
     
     // Load real student data
@@ -104,7 +104,7 @@ export const advisorAPI = {
       return random;
     };
     
-    // Calculate risk for each student and count high risk
+    // Calculate risk for each student
     const studentsWithRisk = students.map(s => ({
       ...s,
       riskScore: calculateRiskScore(s.cumulative_gpa, s.credits_completed),
@@ -112,17 +112,31 @@ export const advisorAPI = {
       attendancePct: getAttendance(s.student_id)
     }));
     
+    // Calculate counts
     const highRiskStudents = studentsWithRisk.filter(s => s.riskTier === "High").length;
     const mediumRiskStudents = studentsWithRisk.filter(s => s.riskTier === "Medium").length;
     const lowRiskStudents = studentsWithRisk.filter(s => s.riskTier === "Low").length;
     const averageAttendance = studentsWithRisk.reduce((sum, s) => sum + s.attendancePct, 0) / totalStudents;
     
-    // Get a representative sample: all high-risk students + some medium and low
-    const highRisk = studentsWithRisk.filter(s => s.riskTier === "High");
-    const mediumRisk = studentsWithRisk.filter(s => s.riskTier === "Medium").slice(0, 50);
-    const lowRisk = studentsWithRisk.filter(s => s.riskTier === "Low").slice(0, 50);
+    // Apply filters
+    let filteredStudents = studentsWithRisk;
+    if (riskFilter !== "all") {
+      filteredStudents = filteredStudents.filter(s => s.riskTier.toLowerCase() === riskFilter);
+    }
+    if (majorFilter !== "all") {
+      filteredStudents = filteredStudents.filter(s => s.major === majorFilter);
+    }
     
-    const studentRows = [...highRisk, ...mediumRisk, ...lowRisk].map(s => ({
+    // Calculate pagination
+    const totalFiltered = filteredStudents.length;
+    const totalPages = Math.ceil(totalFiltered / pageSize);
+    const startIndex = (page - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    
+    // Get paginated data
+    const paginatedStudents = filteredStudents.slice(startIndex, endIndex);
+    
+    const studentRows = paginatedStudents.map(s => ({
       studentId: s.student_id,
       name: s.name,
       major: s.major,
@@ -140,7 +154,13 @@ export const advisorAPI = {
         lowRiskStudents,
         averageTermGpa: Math.round(averageTermGpa * 100) / 100,
         averageAttendance: Math.round(averageAttendance * 10) / 10,
-        studentRows
+        studentRows,
+        pagination: {
+          currentPage: page,
+          pageSize,
+          totalPages,
+          totalFiltered
+        }
       }
     };
   },
