@@ -1,5 +1,18 @@
 import axios from "axios";
-import { loadStudents, calculateRiskTier, calculateRiskScore } from "./dataLoader";
+import { 
+  loadStudents, 
+  loadRiskScores, 
+  loadAttendance, 
+  calculateAverageAttendance,
+  loadAdvisingNotes,
+  loadEnrollments,
+  loadEnrollmentGrades,
+  loadCourses,
+  loadFinancialAid,
+  loadLMSEvents,
+  loadTermGPAs,
+  gradeToLetter
+} from "./dataLoader";
 
 const API_BASE_URL = "http://localhost:8081/api";
 
@@ -93,27 +106,27 @@ export const advisorAPI = {
   getDashboard: async (page: number = 1, pageSize: number = 50, riskFilter: string = "all", majorFilter: string = "all") => {
     await new Promise(resolve => setTimeout(resolve, 300));
     
-    // Load real student data
+    // Load real data from CSVs
     const students = await loadStudents();
+    const riskScores = await loadRiskScores();
+    const attendance = await loadAttendance();
     
     // Calculate statistics from real data
     const totalStudents = students.length;
     const averageTermGpa = students.reduce((sum, s) => sum + s.cumulative_gpa, 0) / totalStudents;
     
-    // Simulate attendance (since not in CSV) - generate consistent random values
-    const getAttendance = (studentId: number) => {
-      const seed = studentId * 12345;
-      const random = (seed % 30) + 70; // 70-100% range
-      return random;
-    };
-    
-    // Calculate risk for each student
-    const studentsWithRisk = students.map(s => ({
-      ...s,
-      riskScore: calculateRiskScore(s.cumulative_gpa, s.credits_completed),
-      riskTier: calculateRiskTier(s.cumulative_gpa, s.credits_completed),
-      attendancePct: getAttendance(s.student_id)
-    }));
+    // Map students with risk and attendance data
+    const studentsWithRisk = students.map(s => {
+      const risk = riskScores.find(r => r.student_id === s.student_id && r.term_id === 1);
+      const avgAttendance = calculateAverageAttendance(attendance, s.student_id);
+      
+      return {
+        ...s,
+        riskScore: risk ? Math.round(risk.risk_score * 100) : 0,
+        riskTier: risk ? risk.risk_tier : "Low",
+        attendancePct: avgAttendance
+      };
+    });
     
     // Calculate counts
     const highRiskStudents = studentsWithRisk.filter(s => s.riskTier === "High").length;
@@ -171,21 +184,23 @@ export const advisorAPI = {
     await new Promise(resolve => setTimeout(resolve, 300));
     
     const students = await loadStudents();
+    const riskScores = await loadRiskScores();
+    const attendance = await loadAttendance();
     
-    const getAttendance = (studentId: number) => {
-      const seed = studentId * 12345;
-      return (seed % 30) + 70;
-    };
-    
-    const studentsWithRisk = students.map(s => ({
-      studentId: s.student_id,
-      name: s.name,
-      major: s.major,
-      riskTier: calculateRiskTier(s.cumulative_gpa, s.credits_completed),
-      riskScore: calculateRiskScore(s.cumulative_gpa, s.credits_completed),
-      termGpa: s.cumulative_gpa,
-      attendancePct: getAttendance(s.student_id)
-    }));
+    const studentsWithRisk = students.map(s => {
+      const risk = riskScores.find(r => r.student_id === s.student_id && r.term_id === 1);
+      const avgAttendance = calculateAverageAttendance(attendance, s.student_id);
+      
+      return {
+        studentId: s.student_id,
+        name: s.name,
+        major: s.major,
+        riskTier: risk ? risk.risk_tier : "Low",
+        riskScore: risk ? Math.round(risk.risk_score * 100) : 0,
+        termGpa: s.cumulative_gpa,
+        attendancePct: avgAttendance
+      };
+    });
     
     let filtered = studentsWithRisk;
     if (searchQuery) {
@@ -258,14 +273,90 @@ export const studentAPI = {
   getDashboard: async (studentId: number) => {
     await new Promise(resolve => setTimeout(resolve, 300));
     
+    // Load all data
     const students = await loadStudents();
+    const riskScores = await loadRiskScores();
+    const attendance = await loadAttendance();
+    const advisingNotes = await loadAdvisingNotes();
+    const enrollments = await loadEnrollments();
+    const enrollmentGrades = await loadEnrollmentGrades();
+    const courses = await loadCourses();
+    const financialAid = await loadFinancialAid();
+    const lmsEvents = await loadLMSEvents();
+    const termGPAs = await loadTermGPAs();
+    
     const student = students.find(s => s.student_id === studentId);
     
     if (!student) {
       throw new Error("Student not found");
     }
     
-    // Use real data from Students.csv
+    // Get risk data for term 1
+    const riskData = riskScores.find(r => r.student_id === studentId && r.term_id === 1);
+    
+    // Get financial aid data
+    const financial = financialAid.find(f => f.student_id === studentId);
+    
+    // Get student enrollments and grades for term 1
+    const studentEnrollments = enrollments.filter(e => e.student_id === studentId && e.term_id === 1);
+    const coursesData = studentEnrollments.map(enrollment => {
+      const course = courses.find(c => c.course_id === enrollment.course_id);
+      const grade = enrollmentGrades.find(g => 
+        g.student_id === studentId && 
+        g.course_id === enrollment.course_id && 
+        g.term_id === 1
+      );
+      
+      // Extract credits from course title (e.g., "CS 200" -> level / 100 = 2 credits minimum, + 1-2)
+      const credits = course ? Math.floor(course.level / 100) + 2 : 3;
+      
+      return {
+        courseName: course?.title || "Unknown Course",
+        credits,
+        grade: grade ? gradeToLetter(grade.course_gpa) : "N/A",
+        numericGrade: grade?.numeric_grade || 0,
+        courseGpa: grade?.course_gpa || 0
+      };
+    });
+    
+    // Get attendance by course for this student
+    const studentAttendance = attendance.filter(a => a.student_id === studentId && a.term_id === 1);
+    const attendanceByCourse = studentEnrollments.map(enrollment => {
+      const course = courses.find(c => c.course_id === enrollment.course_id);
+      const courseAttendance = studentAttendance.filter(a => a.course_id === enrollment.course_id);
+      const avgAttendance = courseAttendance.length > 0
+        ? courseAttendance.reduce((sum, a) => sum + a.attendance_pct, 0) / courseAttendance.length
+        : 0;
+      
+      return {
+        courseName: course?.title || "Unknown Course",
+        percentage: Math.round(avgAttendance * 10) / 10
+      };
+    });
+    
+    // Get term GPAs
+    const studentTermGPAs = termGPAs.filter(t => t.student_id === studentId);
+    const termGpas = studentTermGPAs.map(t => ({
+      term: `Term ${t.term_id}`,
+      gpa: t.term_gpa
+    }));
+    
+    // Get LMS activity for term 1
+    const studentLMS = lmsEvents.filter(l => l.student_id === studentId && l.term_id === 1);
+    const lmsActivity = {
+      weeklyLogins: studentLMS.map(l => ({ week: `Week ${l.week_number}`, count: l.logins })),
+      weeklyTimeSpent: studentLMS.map(l => ({ week: `Week ${l.week_number}`, hours: Math.round(l.time_on_platform_min / 60 * 10) / 10 })),
+      weeklyAssignments: studentLMS.map(l => ({ week: `Week ${l.week_number}`, count: l.assignments_submitted }))
+    };
+    
+    // Get advising notes
+    const studentNotes = advisingNotes.filter(n => n.student_id === studentId);
+    const notes = studentNotes.map(n => ({
+      type: n.intervention_type,
+      date: n.note_date,
+      content: `${n.intervention_type.replace(/_/g, ' ')} intervention on ${n.note_date}`
+    }));
+    
     return {
       data: {
         // Real student profile data
@@ -278,36 +369,34 @@ export const studentAPI = {
         residencyStatus: student.residency_status,
         firstGen: student.first_gen === 1,
         
-        // Placeholders for data from other CSV files (to be loaded when available)
-        termGpas: [], // Will come from performance data
-        courses: [], // Will come from course enrollments
-        courseGrades: [], // Will come from course grades
+        // Term GPAs from CSV
+        termGpas,
         
-        // LMS engagement data (to be loaded from weekly LMS activity CSV)
-        lmsActivity: {
-          weeklyLogins: [],
-          weeklyTimeSpent: [],
-          weeklyAssignments: []
-        },
+        // Courses with real grades from CSV
+        courses: coursesData,
         
-        // Attendance data (to be loaded from attendance CSV)
-        attendanceByCourse: [],
+        // LMS engagement data from CSV
+        lmsActivity,
         
-        // Financial data (to be loaded from financial CSV)
+        // Attendance data from CSV
+        attendanceByCourse,
+        averageAttendance: calculateAverageAttendance(attendance, studentId),
+        
+        // Financial data from CSV
         financial: {
-          aidAmount: null,
-          hasScholarship: false,
-          householdIncome: null,
-          workHours: null,
-          outstandingBalance: null
+          aidAmount: financial?.aid_amount_usd || null,
+          hasScholarship: financial?.scholarship_flag === 1,
+          householdIncome: financial?.household_income_usd || null,
+          workHours: financial?.work_hours_per_week || null,
+          outstandingBalance: financial?.outstanding_balance_usd || null
         },
         
-        // Risk prediction (to be loaded from ML risk CSV)
-        riskScore: null,
-        riskTier: null,
+        // Risk prediction from CSV
+        riskScore: riskData ? Math.round(riskData.risk_score * 100) : null,
+        riskTier: riskData?.risk_tier || null,
         
-        // Advising notes (to be loaded from notes CSV)
-        advisingNotes: []
+        // Advising notes from CSV
+        advisingNotes: notes
       }
     };
   },
