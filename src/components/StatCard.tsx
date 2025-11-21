@@ -1,18 +1,33 @@
 import React from "react";
 import { cn } from "@/lib/utils";
+import { LucideIcon } from "lucide-react";
 
 interface StatCardProps {
-  label: string;
+  title?: string;
+  label?: string;
   value: string | number;
   className?: string;
   valueColor?: string;
+  icon?: LucideIcon;
+  trend?: "danger" | "success" | "neutral";
 }
 
-const StatCard: React.FC<StatCardProps> = ({ label, value, className, valueColor }) => {
+const StatCard: React.FC<StatCardProps> = ({ title, label, value, className, valueColor, icon: Icon, trend }) => {
+  const displayLabel = title || label;
+  
+  const getTrendColor = () => {
+    if (trend === "danger") return "text-destructive";
+    if (trend === "success") return "text-green-600";
+    return "text-foreground";
+  };
+
   return (
     <div className={cn("bg-card rounded-lg border border-border p-6 shadow-sm", className)}>
-      <p className="text-sm text-muted-foreground mb-2">{label}</p>
-      <p className={cn("text-3xl font-bold", valueColor || "text-foreground")}>{value}</p>
+      <div className="flex items-center justify-between mb-2">
+        <p className="text-sm text-muted-foreground">{displayLabel}</p>
+        {Icon && <Icon className="w-5 h-5 text-muted-foreground" />}
+      </div>
+      <p className={cn("text-3xl font-bold", valueColor || getTrendColor())}>{value}</p>
     </div>
   );
 };
