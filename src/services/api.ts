@@ -1,7 +1,6 @@
 import axios from "axios";
 import { 
   loadStudents, 
-  loadRiskScores, 
   loadAttendance, 
   calculateAverageAttendance,
   loadAdvisingNotes,
@@ -13,6 +12,7 @@ import {
   loadTermGPAs,
   gradeToLetter
 } from "./dataLoader";
+import { calculateRisk } from "@/lib/riskCalculation";
 
 const API_BASE_URL = "http://localhost:8081/api";
 
@@ -108,7 +108,6 @@ export const advisorAPI = {
     
     // Load real data from CSVs
     const students = await loadStudents();
-    const riskScores = await loadRiskScores();
     const attendance = await loadAttendance();
     
     // Calculate statistics from real data
@@ -117,13 +116,13 @@ export const advisorAPI = {
     
     // Map students with risk and attendance data
     const studentsWithRisk = students.map(s => {
-      const risk = riskScores.find(r => r.student_id === s.student_id && r.term_id === 1);
       const avgAttendance = calculateAverageAttendance(attendance, s.student_id);
+      const risk = calculateRisk(s.cumulative_gpa, avgAttendance);
       
       return {
         ...s,
-        riskScore: risk ? Math.round(risk.risk_score * 100) : 0,
-        riskTier: risk ? risk.risk_tier : "Low",
+        riskScore: risk.riskScore,
+        riskTier: risk.riskTier,
         attendancePct: avgAttendance
       };
     });
@@ -184,19 +183,18 @@ export const advisorAPI = {
     await new Promise(resolve => setTimeout(resolve, 300));
     
     const students = await loadStudents();
-    const riskScores = await loadRiskScores();
     const attendance = await loadAttendance();
     
     const studentsWithRisk = students.map(s => {
-      const risk = riskScores.find(r => r.student_id === s.student_id && r.term_id === 1);
       const avgAttendance = calculateAverageAttendance(attendance, s.student_id);
+      const risk = calculateRisk(s.cumulative_gpa, avgAttendance);
       
       return {
         studentId: s.student_id,
         name: s.name,
         major: s.major,
-        riskTier: risk ? risk.risk_tier : "Low",
-        riskScore: risk ? Math.round(risk.risk_score * 100) : 0,
+        riskTier: risk.riskTier,
+        riskScore: risk.riskScore,
         termGpa: s.cumulative_gpa,
         attendancePct: avgAttendance
       };
@@ -275,7 +273,6 @@ export const studentAPI = {
     
     // Load all data
     const students = await loadStudents();
-    const riskScores = await loadRiskScores();
     const attendance = await loadAttendance();
     const advisingNotes = await loadAdvisingNotes();
     const enrollments = await loadEnrollments();
@@ -291,8 +288,9 @@ export const studentAPI = {
       throw new Error("Student not found");
     }
     
-    // Get risk data for term 1
-    const riskData = riskScores.find(r => r.student_id === studentId && r.term_id === 1);
+    // Calculate risk based on GPA and attendance
+    const avgAttendance = calculateAverageAttendance(attendance, studentId);
+    const riskData = calculateRisk(student.cumulative_gpa, avgAttendance);
     
     // Get financial aid data
     const financial = financialAid.find(f => f.student_id === studentId);
@@ -391,9 +389,9 @@ export const studentAPI = {
           outstandingBalance: financial?.outstanding_balance_usd || null
         },
         
-        // Risk prediction from CSV
-        riskScore: riskData ? Math.round(riskData.risk_score * 100) : null,
-        riskTier: riskData?.risk_tier || null,
+        // Risk prediction calculated from GPA and attendance
+        riskScore: riskData.riskScore,
+        riskTier: riskData.riskTier,
         
         // Advising notes from CSV
         advisingNotes: notes
