@@ -10,7 +10,8 @@ import { Textarea } from "@/components/ui/textarea";
 import RiskBadge from "@/components/RiskBadge";
 import { advisorAPI } from "@/services/api";
 import { useToast } from "@/hooks/use-toast";
-import { loadStudents, loadRiskScores, loadAttendance, calculateAverageAttendance, loadEnrollments, loadEnrollmentGrades, loadCourses, gradeToLetter } from "@/services/dataLoader";
+import { loadStudents, loadAttendance, calculateAverageAttendance, loadEnrollments, loadEnrollmentGrades, loadCourses, gradeToLetter } from "@/services/dataLoader";
+import { calculateRisk } from "@/lib/riskCalculation";
 
 interface Note {
   noteId: number;
@@ -61,7 +62,6 @@ const AdvisorStudentDetail = () => {
         
         // Load student data
         const students = await loadStudents();
-        const riskScores = await loadRiskScores();
         const attendance = await loadAttendance();
         const enrollments = await loadEnrollments();
         const enrollmentGrades = await loadEnrollmentGrades();
@@ -70,8 +70,8 @@ const AdvisorStudentDetail = () => {
         const studentData = students.find(s => s.student_id === sid);
         if (!studentData) throw new Error("Student not found");
         
-        const risk = riskScores.find(r => r.student_id === sid && r.term_id === 1);
         const avgAttendance = calculateAverageAttendance(attendance, sid);
+        const risk = calculateRisk(studentData.cumulative_gpa, avgAttendance);
         
         // Get courses
         const studentEnrollments = enrollments.filter(e => e.student_id === sid && e.term_id === 1);
@@ -96,8 +96,8 @@ const AdvisorStudentDetail = () => {
           studentId: sid,
           name: studentData.name,
           major: studentData.major,
-          riskTier: risk ? risk.risk_tier : "Low",
-          riskScore: risk ? Math.round(risk.risk_score * 100) : 0,
+          riskTier: risk.riskTier,
+          riskScore: risk.riskScore,
           termGpa: studentData.cumulative_gpa,
           cumulativeGpa: studentData.cumulative_gpa,
           attendancePct: avgAttendance,
