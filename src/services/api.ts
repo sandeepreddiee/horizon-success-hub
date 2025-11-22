@@ -13,6 +13,7 @@ import {
   gradeToLetter
 } from "./dataLoader";
 import { calculateRisk } from "@/lib/riskCalculation";
+import './dataCache'; // Trigger data preload
 
 const API_BASE_URL = "http://localhost:8081/api";
 
@@ -104,7 +105,7 @@ const notesStorage: { [studentId: number]: Array<{ noteId: number; content: stri
 
 export const advisorAPI = {
   getDashboard: async (page: number = 1, pageSize: number = 50, riskFilter: string = "all", majorFilter: string = "all") => {
-    await new Promise(resolve => setTimeout(resolve, 300));
+    await new Promise(resolve => setTimeout(resolve, 100)); // Reduced from 300ms
     
     // Load real data from CSVs
     const students = await loadStudents();
@@ -180,7 +181,7 @@ export const advisorAPI = {
     };
   },
   getStudents: async (page: number = 1, pageSize: number = 30, searchQuery: string = "") => {
-    await new Promise(resolve => setTimeout(resolve, 300));
+    await new Promise(resolve => setTimeout(resolve, 100)); // Reduced from 300ms
     
     const students = await loadStudents();
     const attendance = await loadAttendance();
@@ -226,7 +227,7 @@ export const advisorAPI = {
     };
   },
   getNotes: async (studentId: number) => {
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise(resolve => setTimeout(resolve, 100)); // Reduced from 500ms
     
     // Initialize with default notes if not exists
     if (!notesStorage[studentId]) {
@@ -245,7 +246,7 @@ export const advisorAPI = {
     };
   },
   addNote: async (studentId: number, content: string) => {
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise(resolve => setTimeout(resolve, 100)); // Reduced from 500ms
     
     // Initialize if not exists
     if (!notesStorage[studentId]) {
@@ -269,7 +270,7 @@ export const advisorAPI = {
 
 export const studentAPI = {
   getDashboard: async (studentId: number) => {
-    await new Promise(resolve => setTimeout(resolve, 300));
+    await new Promise(resolve => setTimeout(resolve, 100)); // Reduced from 300ms
     
     // Load all data
     const students = await loadStudents();

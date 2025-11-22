@@ -9,6 +9,7 @@ import { useAuth } from "@/context/AuthContext";
 import { LogOut, Users, AlertTriangle, AlertCircle, CheckCircle, ChevronLeft, ChevronRight } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface StudentRow {
   studentId: number;
@@ -81,9 +82,19 @@ const AdvisorDashboard = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background p-8">
-        <div className="flex items-center justify-center min-h-[60vh]">
-          <p className="text-muted-foreground">Loading dashboard...</p>
+      <div className="flex min-h-screen bg-background">
+        <AdvisorSidebar />
+        <div className="flex-1 p-8">
+          <div className="space-y-6">
+            <Skeleton className="h-8 w-64" />
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+              <Skeleton className="h-32 w-full" />
+              <Skeleton className="h-32 w-full" />
+              <Skeleton className="h-32 w-full" />
+              <Skeleton className="h-32 w-full" />
+            </div>
+            <Skeleton className="h-64 w-full" />
+          </div>
         </div>
       </div>
     );

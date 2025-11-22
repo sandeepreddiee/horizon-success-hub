@@ -5,6 +5,7 @@ import { LogOut, Users, TrendingUp, TrendingDown, Target, AlertCircle } from "lu
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
 import { studentAPI } from "@/services/api";
 import { useToast } from "@/hooks/use-toast";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface TermGPA {
   term: string;
@@ -51,8 +52,17 @@ const StudentProgress = () => {
     return (
       <div className="flex min-h-screen bg-background">
         <StudentSidebar />
-        <div className="flex-1 flex items-center justify-center">
-          <p className="text-muted-foreground">Loading progress...</p>
+        <div className="flex-1 p-8">
+          <div className="space-y-6">
+            <Skeleton className="h-8 w-64" />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <Skeleton className="h-32 w-full" />
+              <Skeleton className="h-32 w-full" />
+              <Skeleton className="h-32 w-full" />
+              <Skeleton className="h-32 w-full" />
+            </div>
+            <Skeleton className="h-96 w-full" />
+          </div>
         </div>
       </div>
     );
