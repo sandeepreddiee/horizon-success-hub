@@ -156,7 +156,10 @@ const StudentProgress = () => {
 
           {/* Semester Performance Chart */}
           <div className="bg-card rounded-lg border border-border p-6 shadow-sm mb-8">
-            <h3 className="text-lg font-heading font-semibold text-foreground mb-6">Term GPA Trend</h3>
+            <h3 className="text-lg font-heading font-semibold text-foreground mb-2">Term GPA Trend</h3>
+            <p className="text-sm text-muted-foreground mb-4">
+              Track your GPA progression across all completed terms. This helps you identify patterns in your academic performance and measure the impact of your study strategies.
+            </p>
             {termGpas.length > 0 ? (
               <ResponsiveContainer width="100%" height={300}>
                 <AreaChart data={termGpas}>

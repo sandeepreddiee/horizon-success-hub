@@ -200,7 +200,10 @@ const StudentDashboard = () => {
               {/* Weekly Logins */}
               {data.lmsActivity.weeklyLogins.length > 0 && (
                 <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
-                  <h3 className="text-lg font-heading font-semibold text-foreground mb-4">Weekly Logins</h3>
+                  <h3 className="text-lg font-heading font-semibold text-foreground mb-2">Weekly Logins</h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Track your engagement by monitoring how often you log into the learning platform each week. Regular logins often correlate with better academic performance.
+                  </p>
                   <ResponsiveContainer width="100%" height={200}>
                     <AreaChart data={data.lmsActivity.weeklyLogins}>
                       <defs>
@@ -222,7 +225,10 @@ const StudentDashboard = () => {
               {/* Weekly Time Spent */}
               {data.lmsActivity.weeklyTimeSpent.length > 0 && (
                 <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
-                  <h3 className="text-lg font-heading font-semibold text-foreground mb-4">Time on Platform (hrs)</h3>
+                  <h3 className="text-lg font-heading font-semibold text-foreground mb-2">Time on Platform (hrs)</h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    View the total hours spent on the learning management system each week. More engaged students typically spend more time accessing course materials and resources.
+                  </p>
                   <ResponsiveContainer width="100%" height={200}>
                     <AreaChart data={data.lmsActivity.weeklyTimeSpent}>
                       <defs>
@@ -244,7 +250,10 @@ const StudentDashboard = () => {
               {/* Weekly Assignments */}
               {data.lmsActivity.weeklyAssignments.length > 0 && (
                 <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
-                  <h3 className="text-lg font-heading font-semibold text-foreground mb-4">Assignments Submitted</h3>
+                  <h3 className="text-lg font-heading font-semibold text-foreground mb-2">Assignments Submitted</h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Monitor your weekly assignment submission rate. Consistent submissions demonstrate good time management and help maintain academic progress.
+                  </p>
                   <ResponsiveContainer width="100%" height={200}>
                     <AreaChart data={data.lmsActivity.weeklyAssignments}>
                       <defs>
@@ -269,7 +278,10 @@ const StudentDashboard = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
             {/* Term GPA Trend */}
             <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
-              <h3 className="text-lg font-heading font-semibold text-foreground mb-4">Term GPA Trend</h3>
+              <h3 className="text-lg font-heading font-semibold text-foreground mb-2">Term GPA Trend</h3>
+              <p className="text-sm text-muted-foreground mb-4">
+                Visualize your academic performance across terms. An upward trend indicates improving grades, while any dips may signal areas needing attention or support.
+              </p>
               {data.termGpas && data.termGpas.length > 0 ? (
                 <ResponsiveContainer width="100%" height={250}>
                   <AreaChart data={data.termGpas}>
