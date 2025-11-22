@@ -23,10 +23,14 @@ export const calculateRisk = (gpa: number, attendancePct: number): RiskAssessmen
   const totalRiskScore = Math.round(gpaRisk + attendanceRisk);
   
   // Determine risk tier based on score
+  // Adjusted thresholds for realistic academic risk assessment:
+  // High: >= 45 (e.g., GPA < 2.0 or poor attendance)
+  // Medium: >= 25 (e.g., GPA 2.0-3.0 with some attendance issues)
+  // Low: < 25 (e.g., GPA > 3.0 with good attendance)
   let riskTier: "Low" | "Medium" | "High";
-  if (totalRiskScore >= 60) {
+  if (totalRiskScore >= 45) {
     riskTier = "High";
-  } else if (totalRiskScore >= 30) {
+  } else if (totalRiskScore >= 25) {
     riskTier = "Medium";
   } else {
     riskTier = "Low";
