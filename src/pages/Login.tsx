@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { authAPI } from "@/services/api";
 import { Button } from "@/components/ui/button";
@@ -6,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import logoImage from "@/assets/horizon-logo.png";
+import { preloadAllData } from "@/services/dataCache";
 
 const Login = () => {
   const [email, setEmail] = useState("advisor@horizonu.edu");
@@ -13,6 +15,7 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleLogin = async (asRole: "ADVISOR" | "STUDENT") => {
     console.log("Login attempt started with:", { email, asRole });
@@ -20,22 +23,25 @@ const Login = () => {
 
     try {
       console.log("Making API call...");
-      const response = await authAPI.login(email, password, asRole); // Pass role to API
+      const response = await authAPI.login(email, password, asRole);
       console.log("API response received:", response);
       const { token, role, studentId } = response.data;
 
+      // Start preloading data immediately after successful auth
+      preloadAllData();
+      
       login(token, role, studentId);
 
       toast({
         title: "Login successful",
-        description: `Welcome back!`,
+        description: "Welcome back!",
       });
 
-      // Navigate after successful login
+      // Use React Router navigation instead of window.location
       if (role === "ADVISOR") {
-        window.location.href = "/advisor/dashboard";
+        navigate("/advisor/dashboard", { replace: true });
       } else {
-        window.location.href = `/student/${studentId}/dashboard`;
+        navigate(`/student/${studentId}/dashboard`, { replace: true });
       }
     } catch (error: any) {
       console.error("Login error details:", error);

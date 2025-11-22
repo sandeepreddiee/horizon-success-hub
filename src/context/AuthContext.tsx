@@ -48,6 +48,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     localStorage.removeItem("token");
     localStorage.removeItem("role");
     localStorage.removeItem("studentId");
+    // Full reload for logout to clear all state
     window.location.href = "/login";
   };
 

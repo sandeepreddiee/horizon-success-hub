@@ -12,7 +12,7 @@ interface StatCardProps {
   trend?: "danger" | "success" | "neutral";
 }
 
-const StatCard: React.FC<StatCardProps> = ({ title, label, value, className, valueColor, icon: Icon, trend }) => {
+const StatCard: React.FC<StatCardProps> = React.memo(({ title, label, value, className, valueColor, icon: Icon, trend }) => {
   const displayLabel = title || label;
   
   const getTrendColor = () => {
@@ -30,6 +30,8 @@ const StatCard: React.FC<StatCardProps> = ({ title, label, value, className, val
       <p className={cn("text-3xl font-heading font-semibold", valueColor || getTrendColor())}>{value}</p>
     </div>
   );
-};
+});
+
+StatCard.displayName = "StatCard";
 
 export default StatCard;

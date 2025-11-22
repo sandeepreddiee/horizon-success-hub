@@ -20,6 +20,9 @@ export const preloadAllData = async () => {
   }
   
   isPreloading = true;
+  console.log('🚀 Starting data preload...');
+  const startTime = performance.now();
+  
   preloadPromise = Promise.all([
     loadStudents(),
     loadAttendance(),
@@ -31,7 +34,8 @@ export const preloadAllData = async () => {
     loadTermGPAs(),
     loadAdvisingNotes()
   ]).then(() => {
-    console.log('✅ All data preloaded successfully');
+    const endTime = performance.now();
+    console.log(`✅ All data preloaded in ${Math.round(endTime - startTime)}ms`);
   });
   
   return preloadPromise;
