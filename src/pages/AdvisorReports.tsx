@@ -67,7 +67,10 @@ const AdvisorReports = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
             {/* Risk Distribution Chart */}
             <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
-              <h3 className="text-lg font-heading font-semibold text-foreground mb-4">Student Risk Distribution</h3>
+              <h3 className="text-lg font-heading font-semibold text-foreground mb-2">Student Risk Distribution</h3>
+              <p className="text-sm text-muted-foreground mb-4">
+                Breakdown of students by risk level. This overview helps prioritize advising resources and identify which student populations need more support.
+              </p>
               <ResponsiveContainer width="100%" height={300}>
                 <PieChart>
                   <Pie
@@ -112,7 +115,10 @@ const AdvisorReports = () => {
 
             {/* GPA Distribution Chart */}
             <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
-              <h3 className="text-lg font-heading font-semibold text-foreground mb-4">Term GPA Distribution</h3>
+              <h3 className="text-lg font-heading font-semibold text-foreground mb-2">Term GPA Distribution</h3>
+              <p className="text-sm text-muted-foreground mb-4">
+                See how students are distributed across GPA ranges. This helps identify if most students are performing well or if intervention is needed for specific groups.
+              </p>
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={gpaDistributionData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
