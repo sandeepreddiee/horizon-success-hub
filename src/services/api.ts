@@ -105,7 +105,7 @@ const notesStorage: { [studentId: number]: Array<{ noteId: number; content: stri
 
 export const advisorAPI = {
   getDashboard: async (page: number = 1, pageSize: number = 50, riskFilter: string = "all", majorFilter: string = "all") => {
-    await new Promise(resolve => setTimeout(resolve, 100)); // Reduced from 300ms
+    // No artificial delay - use cached data
     
     // Load real data from CSVs
     const students = await loadStudents();
@@ -181,7 +181,7 @@ export const advisorAPI = {
     };
   },
   getStudents: async (page: number = 1, pageSize: number = 30, searchQuery: string = "") => {
-    await new Promise(resolve => setTimeout(resolve, 100)); // Reduced from 300ms
+    // No artificial delay - use cached data
     
     const students = await loadStudents();
     const attendance = await loadAttendance();
@@ -270,7 +270,7 @@ export const advisorAPI = {
 
 export const studentAPI = {
   getDashboard: async (studentId: number) => {
-    await new Promise(resolve => setTimeout(resolve, 100)); // Reduced from 300ms
+    // No artificial delay - use cached data
     
     // Load all data
     const students = await loadStudents();

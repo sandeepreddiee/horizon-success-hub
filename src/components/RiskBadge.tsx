@@ -7,7 +7,7 @@ interface RiskBadgeProps {
   className?: string;
 }
 
-const RiskBadge: React.FC<RiskBadgeProps> = ({ tier, level, className }) => {
+const RiskBadge: React.FC<RiskBadgeProps> = React.memo(({ tier, level, className }) => {
   const riskLevel = tier || level || "Low";
   
   return (
@@ -23,6 +23,8 @@ const RiskBadge: React.FC<RiskBadgeProps> = ({ tier, level, className }) => {
       {riskLevel}
     </span>
   );
-};
+});
+
+RiskBadge.displayName = "RiskBadge";
 
 export default RiskBadge;
