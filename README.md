@@ -1,73 +1,141 @@
-# Welcome to your Lovable project
+# Horizon University Student Success Platform
 
-## Project info
+A comprehensive academic advising and student success tracking platform built for higher education institutions.
 
-**URL**: https://lovable.dev/projects/568281cb-a463-4828-886e-1ee152a3574f
+## Overview
 
-## How can I edit this code?
+This platform provides tools for academic advisors and students to monitor academic progress, identify at-risk students, and facilitate timely interventions. The system analyzes multiple data points including GPA, attendance, LMS activity, and financial aid status to provide actionable insights.
 
-There are several ways of editing your application.
+## Features
 
-**Use Lovable**
+### For Advisors
+- **Student Dashboard**: Comprehensive overview of all students with risk assessment
+- **Individual Student Profiles**: Detailed academic history, attendance records, and intervention tracking
+- **Alert System**: Automated notifications for at-risk students
+- **Notes & Interventions**: Document meetings, interventions, and action plans
+- **Analytics & Reports**: Data-driven insights on student success patterns
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/568281cb-a463-4828-886e-1ee152a3574f) and start prompting.
+### For Students
+- **Academic Progress Tracking**: Monitor GPA trends and course performance
+- **Personalized Alerts**: Receive notifications about academic concerns
+- **Resource Access**: Quick access to tutoring, counseling, and financial aid resources
+- **Advisor Communication**: Direct messaging and appointment scheduling
 
-Changes made via Lovable will be committed automatically to this repo.
+## Technology Stack
 
-**Use your preferred IDE**
+- **Frontend**: React 18 with TypeScript
+- **Build Tool**: Vite
+- **UI Framework**: Tailwind CSS
+- **Component Library**: shadcn/ui
+- **Data Visualization**: Recharts & Chart.js
+- **State Management**: TanStack Query (React Query)
+- **Routing**: React Router v6
+- **Form Handling**: React Hook Form with Zod validation
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## Getting Started
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### Prerequisites
 
-Follow these steps:
+- Node.js (v18 or higher)
+- npm or yarn package manager
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+### Installation
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+```bash
+# Clone the repository
+git clone <repository-url>
+cd horizon-university-platform
 
-# Step 3: Install the necessary dependencies.
-npm i
+# Install dependencies
+npm install
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Start development server
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+The application will be available at `http://localhost:5173`
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### Build for Production
 
-**Use GitHub Codespaces**
+```bash
+# Create production build
+npm run build
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+# Preview production build
+npm run preview
+```
 
-## What technologies are used for this project?
+## Project Structure
 
-This project is built with:
+```
+src/
+├── components/          # Reusable UI components
+│   ├── ui/             # Base UI components
+│   ├── RiskBadge.tsx   # Risk level indicator
+│   ├── StatCard.tsx    # Statistics display card
+│   └── ...
+├── pages/              # Application pages
+│   ├── Login.tsx
+│   ├── AdvisorDashboard.tsx
+│   ├── StudentDashboard.tsx
+│   └── ...
+├── services/           # API and data services
+│   ├── api.ts          # API client configuration
+│   ├── dataLoader.ts   # CSV data processing
+│   └── dataCache.ts    # Data caching layer
+├── context/            # React context providers
+├── hooks/              # Custom React hooks
+├── lib/                # Utility functions
+└── data/               # Sample datasets (CSV)
+```
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## Data Model
 
-## How can I deploy this project?
+The platform processes multiple data sources:
+- **Student Profiles**: Demographics, major, enrollment status
+- **Academic Records**: Term GPAs, course enrollments, grades
+- **Attendance**: Class participation tracking
+- **LMS Events**: Learning management system activity
+- **Financial Aid**: Scholarship and aid disbursements
+- **Risk Scores**: Calculated risk assessments
+- **Advising Notes**: Intervention documentation
 
-Simply open [Lovable](https://lovable.dev/projects/568281cb-a463-4828-886e-1ee152a3574f) and click on Share -> Publish.
+## Risk Calculation
 
-## Can I connect a custom domain to my Lovable project?
+Students are assigned risk tiers (Low, Medium, High) based on:
+- **GPA (60% weight)**: Academic performance indicator
+- **Attendance (40% weight)**: Class participation rate
 
-Yes, you can!
+## Authentication
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+The platform supports role-based access control:
+- **Advisors**: Full access to student data and intervention tools
+- **Students**: Personal academic data and resources
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+Default credentials (development):
+- Advisor: `advisor@horizonu.edu` / `advisor123`
+- Student: `student@horizonu.edu` / `student123`
+
+## Performance Optimizations
+
+- Data preloading on application startup
+- React Query caching with 5-minute stale time
+- Component memoization for frequently rendered elements
+- Optimized CSV parsing with browser-side caching
+- Skeleton loaders for improved perceived performance
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/enhancement`)
+3. Commit your changes (`git commit -m 'Add new feature'`)
+4. Push to the branch (`git push origin feature/enhancement`)
+5. Open a Pull Request
+
+## License
+
+Copyright © 2024 Horizon University. All rights reserved.
+
+## Support
+
+For technical support or questions, contact the development team at dev@horizonu.edu
