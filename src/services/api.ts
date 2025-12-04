@@ -57,8 +57,7 @@ export default api;
 // API functions with mock data
 export const authAPI = {
   login: async (username: string, password: string, requestedRole?: "ADVISOR" | "STUDENT") => {
-    // Mock login response
-    await new Promise(resolve => setTimeout(resolve, 500)); // Simulate network delay
+    // Mock login response - no delay for faster UX
     
     // Use requested role if provided, otherwise determine from username
     if (requestedRole === "ADVISOR") {
@@ -103,30 +102,67 @@ export const authAPI = {
 // In-memory storage for notes (per student)
 const notesStorage: { [studentId: number]: Array<{ noteId: number; content: string; timestamp: string }> } = {};
 
+// Pre-computed attendance cache for O(1) lookups
+let attendanceMapCache: Map<number, number> | null = null;
+
+const getAttendanceMap = (attendance: { student_id: number; attendance_pct: number }[]): Map<number, number> => {
+  if (attendanceMapCache) return attendanceMapCache;
+  
+  const sumMap = new Map<number, { sum: number; count: number }>();
+  for (const a of attendance) {
+    const existing = sumMap.get(a.student_id);
+    if (existing) {
+      existing.sum += a.attendance_pct;
+      existing.count += 1;
+    } else {
+      sumMap.set(a.student_id, { sum: a.attendance_pct, count: 1 });
+    }
+  }
+  
+  attendanceMapCache = new Map();
+  for (const [studentId, data] of sumMap) {
+    attendanceMapCache.set(studentId, Math.round((data.sum / data.count) * 10) / 10);
+  }
+  return attendanceMapCache;
+};
+
+// Pre-computed students with risk cache
+let studentsWithRiskCache: Array<{
+  student_id: number;
+  name: string;
+  major: string;
+  cumulative_gpa: number;
+  riskScore: number;
+  riskTier: "High" | "Medium" | "Low";
+  attendancePct: number;
+}> | null = null;
+
 export const advisorAPI = {
   getDashboard: async (page: number = 1, pageSize: number = 50, riskFilter: string = "all", majorFilter: string = "all") => {
-    // No artificial delay - use cached data
-    
-    // Load real data from CSVs
     const students = await loadStudents();
     const attendance = await loadAttendance();
+    const attendanceMap = getAttendanceMap(attendance);
     
-    // Calculate statistics from real data
+    // Use cached computation or compute once
+    if (!studentsWithRiskCache) {
+      studentsWithRiskCache = students.map(s => {
+        const avgAttendance = attendanceMap.get(s.student_id) || 0;
+        const risk = calculateRisk(s.cumulative_gpa, avgAttendance);
+        return {
+          student_id: s.student_id,
+          name: s.name,
+          major: s.major,
+          cumulative_gpa: s.cumulative_gpa,
+          riskScore: risk.riskScore,
+          riskTier: risk.riskTier,
+          attendancePct: avgAttendance
+        };
+      });
+    }
+    
+    const studentsWithRisk = studentsWithRiskCache;
     const totalStudents = students.length;
     const averageTermGpa = students.reduce((sum, s) => sum + s.cumulative_gpa, 0) / totalStudents;
-    
-    // Map students with risk and attendance data
-    const studentsWithRisk = students.map(s => {
-      const avgAttendance = calculateAverageAttendance(attendance, s.student_id);
-      const risk = calculateRisk(s.cumulative_gpa, avgAttendance);
-      
-      return {
-        ...s,
-        riskScore: risk.riskScore,
-        riskTier: risk.riskTier,
-        attendancePct: avgAttendance
-      };
-    });
     
     // Calculate counts
     const highRiskStudents = studentsWithRisk.filter(s => s.riskTier === "High").length;
@@ -181,25 +217,36 @@ export const advisorAPI = {
     };
   },
   getStudents: async (page: number = 1, pageSize: number = 30, searchQuery: string = "") => {
-    // No artificial delay - use cached data
-    
     const students = await loadStudents();
     const attendance = await loadAttendance();
+    const attendanceMap = getAttendanceMap(attendance);
     
-    const studentsWithRisk = students.map(s => {
-      const avgAttendance = calculateAverageAttendance(attendance, s.student_id);
-      const risk = calculateRisk(s.cumulative_gpa, avgAttendance);
-      
-      return {
-        studentId: s.student_id,
-        name: s.name,
-        major: s.major,
-        riskTier: risk.riskTier,
-        riskScore: risk.riskScore,
-        termGpa: s.cumulative_gpa,
-        attendancePct: avgAttendance
-      };
-    });
+    // Reuse cached computation
+    if (!studentsWithRiskCache) {
+      studentsWithRiskCache = students.map(s => {
+        const avgAttendance = attendanceMap.get(s.student_id) || 0;
+        const risk = calculateRisk(s.cumulative_gpa, avgAttendance);
+        return {
+          student_id: s.student_id,
+          name: s.name,
+          major: s.major,
+          cumulative_gpa: s.cumulative_gpa,
+          riskScore: risk.riskScore,
+          riskTier: risk.riskTier,
+          attendancePct: avgAttendance
+        };
+      });
+    }
+    
+    const studentsWithRisk = studentsWithRiskCache.map(s => ({
+      studentId: s.student_id,
+      name: s.name,
+      major: s.major,
+      riskTier: s.riskTier,
+      riskScore: s.riskScore,
+      termGpa: s.cumulative_gpa,
+      attendancePct: s.attendancePct
+    }));
     
     let filtered = studentsWithRisk;
     if (searchQuery) {
@@ -227,7 +274,6 @@ export const advisorAPI = {
     };
   },
   getNotes: async (studentId: number) => {
-    await new Promise(resolve => setTimeout(resolve, 100)); // Reduced from 500ms
     
     // Initialize with default notes if not exists
     if (!notesStorage[studentId]) {
@@ -246,7 +292,6 @@ export const advisorAPI = {
     };
   },
   addNote: async (studentId: number, content: string) => {
-    await new Promise(resolve => setTimeout(resolve, 100)); // Reduced from 500ms
     
     // Initialize if not exists
     if (!notesStorage[studentId]) {
