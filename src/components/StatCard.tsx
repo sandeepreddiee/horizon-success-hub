@@ -10,24 +10,49 @@ interface StatCardProps {
   valueColor?: string;
   icon?: LucideIcon;
   trend?: "danger" | "success" | "neutral";
+  subtitle?: string;
 }
 
-const StatCard: React.FC<StatCardProps> = React.memo(({ title, label, value, className, valueColor, icon: Icon, trend }) => {
+const StatCard: React.FC<StatCardProps> = React.memo(({ 
+  title, 
+  label, 
+  value, 
+  className, 
+  valueColor, 
+  icon: Icon, 
+  trend,
+  subtitle 
+}) => {
   const displayLabel = title || label;
   
   const getTrendColor = () => {
     if (trend === "danger") return "text-destructive";
-    if (trend === "success") return "text-green-600";
+    if (trend === "success") return "text-success";
     return "text-foreground";
   };
 
   return (
-    <div className={cn("bg-card rounded-lg border border-border p-6 shadow-sm", className)}>
-      <div className="flex items-center justify-between mb-2">
-        <p className="text-sm text-muted-foreground">{displayLabel}</p>
-        {Icon && <Icon className="w-5 h-5 text-muted-foreground" />}
+    <div className={cn(
+      "stat-card p-6 transition-all duration-300 hover:shadow-premium-lg group",
+      className
+    )}>
+      <div className="flex items-start justify-between mb-4">
+        <p className="text-sm font-medium text-muted-foreground">{displayLabel}</p>
+        {Icon && (
+          <div className="p-2 rounded-lg bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-300">
+            <Icon className="w-4 h-4" />
+          </div>
+        )}
       </div>
-      <p className={cn("text-3xl font-heading font-semibold", valueColor || getTrendColor())}>{value}</p>
+      <p className={cn(
+        "text-3xl font-heading font-bold tracking-tight", 
+        valueColor || getTrendColor()
+      )}>
+        {value}
+      </p>
+      {subtitle && (
+        <p className="text-xs text-muted-foreground mt-2">{subtitle}</p>
+      )}
     </div>
   );
 });
